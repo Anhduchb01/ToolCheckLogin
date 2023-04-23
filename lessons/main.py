@@ -4,151 +4,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 import random
 import string
 import re
-class Generate:
-	def __init__(self) -> None:
-		# list of popular first names in the US
-		self.list_first_names = ["Emma", "Liam", "Olivia", "Noah", "Ava", "William", "Sophia", "James", "Isabella", "Oliver", "Charlotte", "Benjamin", "Amelia", "Elijah", "Mia", "Lucas", "Harper", "Mason", "Evelyn", "Logan"]
-		# list of popular last names in the US
-		self.list_last_names = ["Smith", "Johnson", "Brown", "Garcia", "Miller", "Jones", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Perez", "Taylor", "Anderson", "Wilson", "Jackson", "Moore", "Martin", "Lee"]
-	def random_first_name(self):
-		# choose a random first name from the list of popular first names
-			return random.choice(self.list_first_names)
-	def random_last_name(self):
-		# choose a random last name from the list of popular last names
-		return random.choice(self.list_last_names)
-
-	def random_email(self, last: str):
-		number_random = ''.join(random.choices(string.digits, k=4))
-		string_random = ''.join(random.choices(string.ascii_uppercase , k=2))
-		email = f"{last.lower()}{string_random.lower()}{number_random}@gmail.com"
-		return email
-	def random_password(self):
-		# generate a random password consisting of letters (both upper and lower case) and digits
-		alphabet = string.ascii_letters + string.digits
-		password = ''.join(random.choices(alphabet, k=12))
-		return password
-		
-class Browser:
-	browser, service = None, None
-
-	# Initialise the webdriver with the path to chromedriver.exe
-	def __init__(self, driver: str):
-		self.service = Service(driver)
-		self.options = webdriver.ChromeOptions()
-		self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
-
-		self.browser = webdriver.Chrome(service=self.service,options= self.options)
-
-	def open_page(self, url: str):
-		self.browser.get(url)
-		self.check_page_qc()
-
-	def close_browser(self):
-		self.browser.close()
-
-	def add_input(self, by: By, value: str, text: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
-		field = self.browser.find_element(by=by, value=value)
-		field.send_keys(text)
-		time.sleep(1)
-	def remove_input(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
-		field = self.browser.find_element(by=by, value=value)
-		field.clear()
-		time.sleep(1)
-	def click_button(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
-		button = self.browser.find_element(by=by, value=value)
-		button.click()
-		time.sleep(1)
-
-	def login(self, username: str, password: str):
-		self.add_input(by=By.ID, value='PasswordEmail', text=username)
-		self.add_input(by=By.ID, value='txtPassword', text=password)
-		self.click_button(by=By.ID, value='PasswordLoginSubmit')
-	def check_page_qc(self):
-		try:
-			print('QC')
-			self.browser.find_element(by=By.CLASS_NAME, value='evg-main-panel')
-			self.click_button(by=By.CLASS_NAME, value='evg-btn-dismissal')
-		except:
-			print('Not QC')
-			pass
-			
-	def page_loading(self):
-		print("Checking if {} page is loaded.".format(self.browser.current_url))
-		page_state = self.browser.execute_script('return document.readyState;')
-		if  page_state == 'complete':
-			print('Complete')
-			return False
-		else :
-			print('Not Complete')
-			return True
-
-	
-	def register(self, first_name: str, last_name: str, email: str,password: str):
-		page_loading= True
-		while page_loading:
-			page_loading = self.page_loading()
-			if page_loading==False :
-				self.check_page_qc()
-				self.add_input(by=By.ID, value='RegisterFirstName', text=first_name)
-				self.add_input(by=By.ID, value='RegisterLastName', text=last_name)
-				self.add_input(by=By.ID, value='RegisterEmailId', text=email)
-				self.add_input(by=By.ID, value='NewPassword', text=password)
-				time.sleep(3)
-				self.check_page_qc()
-				self.click_button(by=By.ID, value='Save')
-	def register_again(self, email: str):
-		page_loading= True
-		while page_loading:
-			page_loading = self.page_loading()
-			if page_loading==False :
-				self.check_page_qc()
-				self.remove_input(by=By.ID, value='RegisterEmailId')
-				self.add_input(by=By.ID, value='RegisterEmailId', text=email)
-				time.sleep(3)
-				self.check_page_qc()
-				self.click_button(by=By.ID, value='submit-proceed')
-	def check_Visible(self, by: By, value: str):
-		try:	
-			wait = WebDriverWait(self.browser, 10)
-			wait.until(EC.presence_of_element_located((by, value)))
-			span_error_email = self.browser.find_element(by=by, value=value)
-			if span_error_email.get_attribute('style') == 'display: none;':
-				return False
-			else:
-				return True
-		except NoSuchElementException:
-			print("No span element with id='validate-email-proceed' found on the page")
-	def chooseTypeProduct(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
-		color_box_container = browser.browser.find_element(by,value)
-		# Find the img element within the li element and click on it
-
-		try:
-			img = color_box_container.find_element(By.TAG_NAME, 'img')
-			# If img is found, click on it
-			img.click()
-		except NoSuchElementException:
-		# If img is not found, find the button and click on it
-			button = color_box_container.find_element(By.TAG_NAME, 'button')
-			button.click()
-		time.sleep(3)
-	def turn_off_modal(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
-		color_box_container = browser.browser.find_element(by,value)
-		exit_button = color_box_container.find_element(By.CLASS_NAME,'close')
-		exit_button.click()
+from generate import Generate
+from browser import Browser
 
 def action_register(browser):
 	generate = Generate()
@@ -180,6 +42,9 @@ def action_register(browser):
 						check_register = False
 				else:
 					print('Register OK')
+					print(f'{email}|{password}')
+					with open('account.txt', 'w') as f:
+						f.write(f'{email}|{password}')
 					check_register = False
 def action_make_order(browser):
 	browser.browser.get(urls[0])
@@ -187,7 +52,100 @@ def action_make_order(browser):
 	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.size-box-container:first-of-type')
 	time.sleep(2)
 	browser.click_button(by=By.ID,value="btn-quick-buy-pdp")
-	browser.turn_off_modal(by=By.CLASS_NAME,value='modal-content')
+	time.sleep(2)
+	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+def action_login(browser,mail,password):
+	browser.open_page('https://www.shophq.com/Account/Login')
+	time.sleep(20)
+	browser.login(mail,password)
+	time.sleep(2)
+def action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code):
+	browser.add_ship_address()
+	time.sleep(2)
+	page_loading= True
+	while page_loading:
+		page_loading = browser.page_loading()
+		if page_loading==False :
+			curentUrl = browser.browser.current_url
+			if 'shophq.com/Account/Login' in curentUrl:
+				browser.remove_input(By.ID,'PasswordEmail')
+				action_login(browser,email,password)
+	
+	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_FirstName',text=first_name)
+	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_LastName',text=last_name)
+	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Address1',text=address)
+	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_City',text=city)
+	browser.select_option('ShippingAddresses_SelectedAddress_State',state)
+	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Zip',text=zip_code)
+	wait = WebDriverWait(browser, 10)
+	wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn')))
+	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	print(add_address_button)
+
+	
+	# try:
+		
+	# 	add_address_button.click()	
+	# except:
+	# 	print('Not Click add ship address')
+	# 	pass
+def action_add_bill_address(browser,email,password,address,city,state,zip_code,phone):
+	browser.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
+	time.sleep(2)
+	page_loading= True
+	while page_loading:
+		page_loading = browser.page_loading()
+		if page_loading==False :
+			curentUrl = browser.browser.current_url
+			if 'shophq.com/Account/Login' in curentUrl:
+				browser.remove_input(By.ID,'PasswordEmail')
+				action_login(browser,email,password)
+	
+	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_Address1',text=address)
+	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_City',text=city)
+	browser.select_option('BillingAddresses_SelectedAddress_State',state)
+	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_Zip',text=zip_code)
+	browser.add_input(by=By.ID,value='PhoneNumber',text=phone)
+	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+
+
+def action_add_creadit(browser,number:str,month:str,year:str):
+
+	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+	print(radio_button)
+	# check if the radio button is selected
+	if  radio_button.isSelected():
+		print('have exits credit')
+		browser.click_button(By.CSS_SELECTOR,'#cphBody_optNewCard')
+		time.sleep(2)
+		browser.add_input(By.ID,'cc_number',number)
+		browser.add_input(By.ID,'expiration-month',month)
+		browser.add_input(By.ID,'expiration-year',year)
+		browser.add_input(By.ID,'cc_cvv','000')
+		time.sleep(3)
+		browser.click_button(By.ID,'btnSaveCreditCard')
+		time.sleep(3)
+	else:
+		print(' not have exits credit')
+		browser.click_button(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+		time.sleep(2)
+		browser.add_input(By.ID,'cc_number',number)
+		browser.add_input(By.ID,'expiration-month',month)
+		browser.add_input(By.ID,'expiration-year',year)
+		browser.add_input(By.ID,'cc_cvv','000')
+		time.sleep(3)
+		browser.click_button(By.ID,'btnSaveCreditCard')
+		time.sleep(3)
+def action_place_my_order(browser):
+	time.sleep(3)
+	try:
+		browser.click_button(By.CSS_SELECTOR,'#PlaceOrderFormTop > button')
+	except:
+		browser.click_button(By.CSS_SELECTOR,'#PlaceOrderForm > button')
+	time.sleep(3)
+def save_result(line):
+	with open('result.txt', 'a') as f:
+		f.write('\n'+ line)
 if __name__ == '__main__':
 	urls = []
 
@@ -198,10 +156,46 @@ if __name__ == '__main__':
 			urls.append(url)
 	print(urls)
 	# Load the first URL using the webdriver object
+	with open('account.txt', 'r') as f:
+		for line in f:
+			email, password = line.strip().split('|')
+			email = email.replace(' ','')
+			password= password.replace(' ','')
+	print(email,password)
+	form_ship_address = []
+	with open('ship_address.txt', 'r') as f:
+		for line in f:
+			# Split the line into separate fields
+			raw = line.strip()
+			form_ship_address.append(raw)
+			# Extract the individual fields
+	print(form_ship_address)
+	first_name = form_ship_address[0]
+	last_name = form_ship_address[1]
+	address = form_ship_address[2]
+	city = form_ship_address[3]
+	state = form_ship_address[4]
+	zip_code = form_ship_address[5]
+	phone = form_ship_address[6]
+	list_creadit = []
+	with open('credit.txt', 'r') as f:
+		for line in f:
+			number, month, year = line.strip().split('|')
+			list_creadit.append([number, month, year])
 
 	browser = Browser('drivers/chromedriver')
 	# Register Account
-	action_register(browser)
+	# action_register(browser)
+
+	action_login(browser,email,password)
+	time.sleep(10)
+	page_loading =True
+	while page_loading:
+		page_loading = browser.page_loading()
+		if page_loading==False :
+			curentUrl = browser.browser.current_url
+			if 'www.shophq.com/?SignInSuccess=true' not in curentUrl:
+				action_register(browser)
 	time.sleep(2)
 	# go to product and Buy
 	page_loading= True
@@ -211,15 +205,38 @@ if __name__ == '__main__':
 			action_make_order(browser)
 			time.sleep(5)
 		time.sleep(3)
-	page_loading= True
-	# while page_loading:
-	# 	page_loading = browser.page_loading()
-	# 	if page_loading==False :
-
-		
-	# 	time.sleep(3)
+	try:
+		action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
+		time.sleep(3)
+		action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
+		time.sleep(3)
+	except:
+		print('Da co thong tin')
+	for i in range(len(list_creadit)):
+		# try:
+		number = list_creadit[i][0]
+		month = list_creadit[i][1]
+		year = list_creadit[i][2]
+		time.sleep(3)
+		action_add_creadit(browser,number,month,year)
+		# except Exception as e:
+		# 	print('Error Credit')
+		# 	print(e)
 			
+		try:
+			action_place_my_order(browser)
+		except:
+			print('Not make order')
 
-	
+		time.sleep(3)
+		try:
+			browser.browser.find_element(By.ID,'checkout-error')
+			print('Khong thanh toan duoc')
+			line= f'{number}|{month}|{year}|fail'
+			save_result(line)
+		except NoSuchElementException :
+			print('thanh toan duwoc')
+			line= f'{number}|{month}|{year}|pass'
+			save_result(line)
 	browser.close_browser()
 	

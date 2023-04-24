@@ -43,8 +43,8 @@ class Browser:
 		field.clear()
 		time.sleep(1)
 	def click_button(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
+		wait = WebDriverWait(self.browser, 20)
+		wait.until(EC.element_to_be_clickable((by, value)))
 		button = self.browser.find_element(by=by, value=value)
 		button.click()
 		time.sleep(1)
@@ -163,7 +163,7 @@ class Browser:
 		# select the option with value 'AK'
 		dropdown.select_by_value(value)
 	def find_element_input(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
+		wait = WebDriverWait(self.browser, 60)
+		wait.until(EC.element_to_be_clickable((by, value)))
 		element = self.browser.find_element(by, value)
 		return element

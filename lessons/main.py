@@ -6,9 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
-import random
-import string
-import re
 from generate import Generate
 from browser import Browser
 
@@ -56,7 +53,7 @@ def action_make_order(browser):
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 def action_login(browser,mail,password):
 	browser.open_page('https://www.shophq.com/Account/Login')
-	time.sleep(20)
+	time.sleep(2)
 	browser.login(mail,password)
 	time.sleep(2)
 def action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code):
@@ -77,18 +74,8 @@ def action_add_ship_address(browser,email,password,first_name,last_name,address,
 	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_City',text=city)
 	browser.select_option('ShippingAddresses_SelectedAddress_State',state)
 	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Zip',text=zip_code)
-	wait = WebDriverWait(browser, 10)
-	wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn')))
 	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
-	print(add_address_button)
 
-	
-	# try:
-		
-	# 	add_address_button.click()	
-	# except:
-	# 	print('Not Click add ship address')
-	# 	pass
 def action_add_bill_address(browser,email,password,address,city,state,zip_code,phone):
 	browser.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
 	time.sleep(2)
@@ -110,9 +97,21 @@ def action_add_bill_address(browser,email,password,address,city,state,zip_code,p
 
 
 def action_add_creadit(browser,number:str,month:str,year:str):
-
-	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
-	print(radio_button)
+	try:
+		radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+	except:
+		print('expand')
+		page_loading= True
+		while page_loading:
+			page_loading = browser.page_loading()
+			if page_loading==False :
+				time.sleep(2)
+				edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
+				print('expand ok')
+				radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+		
+		
+	
 	# check if the radio button is selected
 	if  radio_button.isSelected():
 		print('have exits credit')
@@ -188,7 +187,7 @@ if __name__ == '__main__':
 	# action_register(browser)
 
 	action_login(browser,email,password)
-	time.sleep(10)
+	time.sleep(2)
 	page_loading =True
 	while page_loading:
 		page_loading = browser.page_loading()
@@ -203,15 +202,30 @@ if __name__ == '__main__':
 		page_loading = browser.page_loading()
 		if page_loading==False :
 			action_make_order(browser)
-			time.sleep(5)
 		time.sleep(3)
-	try:
-		action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
-		time.sleep(3)
-		action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
-		time.sleep(3)
-	except:
-		print('Da co thong tin')
+	page_loading= True
+	while page_loading:
+		page_loading = browser.page_loading()
+		if page_loading==False :
+			curentUrl = browser.browser.current_url
+			if 'shophq.com/Checkout/QuickBuy' in curentUrl:
+				try:
+					action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
+					time.sleep(3)
+				except:
+					print('Da co thong tin ship address')
+				try:
+					action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
+					time.sleep(3)
+				except:
+					print('Da co thong tin bill address')
+			
+			else:
+				time.sleep(6)
+				print('Not make order')
+	
+		
+	
 	for i in range(len(list_creadit)):
 		# try:
 		number = list_creadit[i][0]
@@ -219,9 +233,6 @@ if __name__ == '__main__':
 		year = list_creadit[i][2]
 		time.sleep(3)
 		action_add_creadit(browser,number,month,year)
-		# except Exception as e:
-		# 	print('Error Credit')
-		# 	print(e)
 			
 		try:
 			action_place_my_order(browser)

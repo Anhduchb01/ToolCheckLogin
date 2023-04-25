@@ -9,6 +9,9 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+        self.load_data()
+
+        
 
         # configure window
         self.title("Tool Check Credit")
@@ -75,17 +78,17 @@ class App(customtkinter.CTk):
         self.label_radio_group.grid(row=0, column=0 ,columnspan = 2)
         self.label_email = customtkinter.CTkLabel(master=self.account_frame, text="Email :")
         self.label_email.grid(row=1, column=0, padx=10, pady=10, sticky="W")
-        self.entry_email = customtkinter.CTkEntry(self.account_frame, placeholder_text="user@gmail.com")
+        
+        self.entry_email = customtkinter.CTkEntry(self.account_frame, placeholder_text="user@gmail.com",textvariable=self.email)
         self.entry_email.grid(row=1, column=1, padx=10, pady=10)
         self.label_password = customtkinter.CTkLabel(master=self.account_frame, text="Password :")
         self.label_password.grid(row=2, column=0, padx=10, pady=10, sticky="W")
-        self.entry_password = customtkinter.CTkEntry(self.account_frame, placeholder_text="password")
+        self.entry_password = customtkinter.CTkEntry(self.account_frame, placeholder_text="password",textvariable=self.password)
         self.entry_password.grid(row=2, column=1, padx=20, pady=(10, 10))
-        self.string_input_button = customtkinter.CTkButton(self.account_frame, text="Save",
-                                                           command=self.open_input_dialog_event)
-        self.string_input_button.grid(row=3, column=0,columnspan = 2)
-        # self.string_input_button.grid_rowconfigure(1, weight=1)
-        # self.string_input_button.grid_columnconfigure(1, weight=1)
+        self.save_account_button = customtkinter.CTkButton(self.account_frame, text="Save",
+                                                           command=self.save_account)
+        self.save_account_button.grid(row=3, column=0,columnspan = 2)
+
 
         
 
@@ -100,32 +103,32 @@ class App(customtkinter.CTk):
         self.label_radio_group.grid(row=0, column=0 ,columnspan = 2)
         self.label_firstname = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="First Name :")
         self.label_firstname.grid(row=1, column=0,padx=10, pady=(10, 10), sticky="W")
-        self.entry_firstname = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="first name")
+        self.entry_firstname = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="first name",textvariable=self.first_name)
         self.entry_firstname.grid(row=1, column=1,padx=10, pady=(10, 10), sticky="WE")
 
         self.label_lastname = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Last Name :")
         self.label_lastname.grid(row=2, column=0,padx=10, pady=(5, 5), sticky="W")
-        self.entry_lastname = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Last name")
+        self.entry_lastname = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Last name",textvariable=self.last_name)
         self.entry_lastname.grid(row=2, column=1,padx=10, pady=(5, 5), sticky="WE")
 
         self.label_address = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Address :")
         self.label_address.grid(row=3, column=0,padx=10, pady=(5, 5), sticky="W")
-        self.entry_address = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Address")
+        self.entry_address = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Address",textvariable=self.address)
         self.entry_address.grid(row=3, column=1,padx=10, pady=(5, 5), sticky="WE")
 
         self.label_city = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="City :")
         self.label_city.grid(row=4, column=0,padx=10, pady=(5, 5), sticky="W")
-        self.entry_city = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="City")
+        self.entry_city = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="City",textvariable=self.city)
         self.entry_city.grid(row=4, column=1,padx=10, pady=(5, 5), sticky="WE")
 
         self.label_state = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="State :")
         self.label_state.grid(row=5, column=0,padx=10, pady=(5, 5), sticky="W")
-        self.entry_state = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="State")
+        self.entry_state = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="State",textvariable=self.state_number)
         self.entry_state.grid(row=5, column=1,padx=10, pady=(5, 5), sticky="WE")
 
         self.label_phone = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Phone :")
         self.label_phone.grid(row=6, column=0,padx=10, pady=(5, 5), sticky="W")
-        self.entry_phone = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Phone ")
+        self.entry_phone = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Phone ",textvariable=self.phone)
         self.entry_phone.grid(row=6, column=1,padx=10, pady=(5, 5), sticky="WE")
 
         self.string_input_button = customtkinter.CTkButton(self.slider_progressbar_frame, text="Save Info",
@@ -154,28 +157,9 @@ class App(customtkinter.CTk):
         self.label_url_product.grid(row=4, column=0,padx=(0, 0), pady=(10, 0) , sticky="WE" )
         self.textbox_result = customtkinter.CTkTextbox(self.url_product_frame,height=150)
         self.textbox_result.grid(row=5, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
-        # # create scrollable frame
-        # self.scrollable_frame = customtkinter.CTkScrollableFrame(self, label_text="CTkScrollableFrame")
-        # self.scrollable_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        # self.scrollable_frame.grid_columnconfigure(0, weight=1)
-        # self.scrollable_frame_switches = []
-        # for i in range(100):
-        #     switch = customtkinter.CTkSwitch(master=self.scrollable_frame, text=f"CTkSwitch {i}")
-        #     switch.grid(row=i, column=0, padx=10, pady=(0, 20))
-        #     self.scrollable_frame_switches.append(switch)
 
-        # # create checkbox and switch frame
-        # self.checkbox_slider_frame = customtkinter.CTkFrame(self)
-        # self.checkbox_slider_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        # self.checkbox_1 = customtkinter.CTkCheckBox(master=self.checkbox_slider_frame)
-        # self.checkbox_1.grid(row=1, column=0, pady=(20, 0), padx=20, sticky="n")
-        # self.checkbox_2 = customtkinter.CTkCheckBox(master=self.checkbox_slider_frame)
-        # self.checkbox_2.grid(row=2, column=0, pady=(20, 0), padx=20, sticky="n")
-        # self.checkbox_3 = customtkinter.CTkCheckBox(master=self.checkbox_slider_frame)
-        # self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
 
-        # set default values
-        # self.sidebar_button_3.configure(state="disabled", text="Disabled CTkButton")
+        self.entry_email.bind(command=self.change_account)
         self.textbox_result.configure(state="disabled")
         
         # self.checkbox_1.select()
@@ -186,16 +170,55 @@ class App(customtkinter.CTk):
         self.scaling_optionemenu.set("100%")
         # self.optionmenu_1.set("CTkOptionmenu")
         # self.combobox_1.set("CTkComboBox")
-        self.textbox.insert("0.0", "Hướng dẫn sử dụng\n\n" + "Import data" )
+        self.textbox.insert("0.0", "Hướng dẫn sử dụng\n\n" + "1. Chọn Chế độ : đăng nhập sẽ đăng nhập theo tài khoản đã nhập nếu fail sẽ tự động đăng ký.\n" +"2.Kiểm tra và chỉnh sửa thông tin tài khoản ( Save Info để lưu ).\n"+"3.Kiểm tra và chỉnh sửa url product ( Save URL để lưu ).\n" +"4.RUN\n"+"5.Xem kết quả (fail - pass).")
+        for i in  range(len(self.urls_list)):
+            self.textbox_product.insert(str(i)+".0",self.urls_list[i]+ "\n" )
         self.textbox.configure(state="disabled")
-        # self.slider_1.configure(command=self.progressbar_2.set)
-        # self.slider_2.configure(command=self.progressbar_3.set)
-        # self.progressbar_1.configure(mode="indeterminnate")
-        # self.progressbar_1.start()
-        
-        # self.seg_button_1.configure(values=["CTkSegmentedButton", "Value 2", "Value 3"])
-        # self.seg_button_1.set("Value 2")
 
+    def load_data(self):
+        self.urls_list = []
+
+        # Read each line of the file and append to the urls array
+        url_product_list= open('url_product.txt', 'r') 
+        for line in url_product_list:
+            url = line.strip()
+            self.urls_list.append(url)
+        print(self.urls_list)
+        # Load the first URL using the webdriver object
+        account =  open('account.txt', 'r')
+        for line in account:
+            self.email, self.password = line.strip().split('|')
+            self.email = customtkinter.StringVar(value=self.email.replace(' ',''))
+            self.password= customtkinter.StringVar(value=self.password.replace(' ',''))
+        print(self.email,self.password)
+        form_ship_address = []
+        ship_address =  open('ship_address.txt', 'r')
+        for line in ship_address:
+            # Split the line into separate fields
+            raw = line.strip()
+            form_ship_address.append(raw)
+            # Extract the individual fields
+        print(form_ship_address)
+    
+        self.first_name = customtkinter.StringVar(value=form_ship_address[0])
+        self.last_name = customtkinter.StringVar(value=form_ship_address[1])
+        self.address = customtkinter.StringVar(value=form_ship_address[2])
+        self.city = customtkinter.StringVar(value=form_ship_address[3])
+        self.state_number = customtkinter.StringVar(value=form_ship_address[4])
+        self.zip_code = customtkinter.StringVar(value=form_ship_address[5])
+        self.phone = customtkinter.StringVar(value=form_ship_address[6])
+        self.list_creadit = []
+        credit =  open('credit.txt', 'r')
+        for line in credit:
+            number, month, year = line.strip().split('|')
+            self.list_creadit.append([number, month, year])
+    def save_account(self):
+        with open('account.txt', 'w') as f :
+            account = str(self.email.get())+'|'+str(self.password.get())
+            f.write(account)
+            # self.save_account_button.configure(state="disabled",text="Saved")
+    def change_account(self):
+        print('Change ok')
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
         print("CTkInputDialog:", dialog.get_input())

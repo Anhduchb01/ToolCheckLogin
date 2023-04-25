@@ -177,6 +177,7 @@ if __name__ == '__main__':
 	zip_code = form_ship_address[5]
 	phone = form_ship_address[6]
 	list_creadit = []
+	
 	with open('credit.txt', 'r') as f:
 		for line in f:
 			number, month, year = line.strip().split('|')

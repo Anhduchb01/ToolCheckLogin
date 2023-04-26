@@ -98,7 +98,7 @@ class App(customtkinter.CTk):
         self.slider_progressbar_frame.grid_columnconfigure(0, weight=1)
         self.slider_progressbar_frame.grid_columnconfigure(1, weight=2)
         
-        self.slider_progressbar_frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
+        self.slider_progressbar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8), weight=1)
         self.label_radio_group = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Thông tin tài khoản")
         self.label_radio_group.grid(row=0, column=0 ,columnspan = 2)
         self.label_firstname = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="First Name :")
@@ -123,17 +123,23 @@ class App(customtkinter.CTk):
 
         self.label_state = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="State :")
         self.label_state.grid(row=5, column=0,padx=10, pady=(5, 5), sticky="W")
-        self.entry_state = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="State",textvariable=self.state_number)
+        self.entry_state = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="State",textvariable=self.state_city)
         self.entry_state.grid(row=5, column=1,padx=10, pady=(5, 5), sticky="WE")
 
+        self.label_state = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Zip Code :")
+        self.label_state.grid(row=6, column=0,padx=10, pady=(5, 5), sticky="W")
+        self.entry_state = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Zip Code",textvariable=self.zip_code)
+        self.entry_state.grid(row=6, column=1,padx=10, pady=(5, 5), sticky="WE")
+
+
         self.label_phone = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Phone :")
-        self.label_phone.grid(row=6, column=0,padx=10, pady=(5, 5), sticky="W")
+        self.label_phone.grid(row=7, column=0,padx=10, pady=(5, 5), sticky="W")
         self.entry_phone = customtkinter.CTkEntry(self.slider_progressbar_frame, placeholder_text="Phone ",textvariable=self.phone)
-        self.entry_phone.grid(row=6, column=1,padx=10, pady=(5, 5), sticky="WE")
+        self.entry_phone.grid(row=7, column=1,padx=10, pady=(5, 5), sticky="WE")
 
         self.string_input_button = customtkinter.CTkButton(self.slider_progressbar_frame, text="Save Info",
-                                                           command=self.open_input_dialog_event)
-        self.string_input_button.grid(row=7, column=0,columnspan = 2,pady=(10,10))
+                                                           command=self.save_info)
+        self.string_input_button.grid(row=8, column=0,columnspan = 2,pady=(10,10))
         
         # create slider and progressbar frame
 
@@ -150,7 +156,7 @@ class App(customtkinter.CTk):
         self.textbox_product = customtkinter.CTkTextbox(self.url_product_frame,height=50)
         self.textbox_product.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
         self.string_input_button = customtkinter.CTkButton(self.url_product_frame, text="Save URL",
-                                                           command=self.open_input_dialog_event)
+                                                           command=self.save_url_product)
         self.string_input_button.grid(row=3, column=0,pady=(5,10))
 
         self.label_url_product = customtkinter.CTkLabel(master=self.url_product_frame, text="Kết quả")
@@ -161,7 +167,7 @@ class App(customtkinter.CTk):
 
         self.entry_email.bind(command=self.change_account)
         self.textbox_result.configure(state="disabled")
-        
+        self.textbox_product.insert("0.0",self.string_url_product)
         # self.checkbox_1.select()
         # self.scrollable_frame_switches[0].select()
         # self.scrollable_frame_switches[4].select()
@@ -171,8 +177,7 @@ class App(customtkinter.CTk):
         # self.optionmenu_1.set("CTkOptionmenu")
         # self.combobox_1.set("CTkComboBox")
         self.textbox.insert("0.0", "Hướng dẫn sử dụng\n\n" + "1. Chọn Chế độ : đăng nhập sẽ đăng nhập theo tài khoản đã nhập nếu fail sẽ tự động đăng ký.\n" +"2.Kiểm tra và chỉnh sửa thông tin tài khoản ( Save Info để lưu ).\n"+"3.Kiểm tra và chỉnh sửa url product ( Save URL để lưu ).\n" +"4.RUN\n"+"5.Xem kết quả (fail - pass).")
-        for i in  range(len(self.urls_list)):
-            self.textbox_product.insert(str(i)+".0",self.urls_list[i]+ "\n" )
+        
         self.textbox.configure(state="disabled")
 
     def load_data(self):
@@ -184,6 +189,10 @@ class App(customtkinter.CTk):
             url = line.strip()
             self.urls_list.append(url)
         print(self.urls_list)
+        self.string_url_product = ''
+        for i in  range(len(self.urls_list)):
+           self.string_url_product += str(self.urls_list[i])+ "\n" 
+        
         # Load the first URL using the webdriver object
         account =  open('account.txt', 'r')
         for line in account:
@@ -204,7 +213,7 @@ class App(customtkinter.CTk):
         self.last_name = customtkinter.StringVar(value=form_ship_address[1])
         self.address = customtkinter.StringVar(value=form_ship_address[2])
         self.city = customtkinter.StringVar(value=form_ship_address[3])
-        self.state_number = customtkinter.StringVar(value=form_ship_address[4])
+        self.state_city = customtkinter.StringVar(value=form_ship_address[4])
         self.zip_code = customtkinter.StringVar(value=form_ship_address[5])
         self.phone = customtkinter.StringVar(value=form_ship_address[6])
         self.list_creadit = []
@@ -217,6 +226,15 @@ class App(customtkinter.CTk):
             account = str(self.email.get())+'|'+str(self.password.get())
             f.write(account)
             # self.save_account_button.configure(state="disabled",text="Saved")
+    def save_info(self):
+        with open('ship_address.txt', 'w') as f :
+            ship_adress_form = str(self.first_name.get()) +"\n" +str(self.last_name.get()) +"\n" +str(self.address.get()) +"\n" +str(self.city.get()) +"\n"+str(self.state_city.get()) +"\n" +str(self.zip_code.get()) +"\n" +str(self.phone.get())
+            print(ship_adress_form)
+            f.write(ship_adress_form)
+    def save_url_product(self):
+        with open('url_product.txt', 'w') as f :
+            url_product = self.textbox_product.get('0.0','end-1c')
+            f.write(url_product)
     def change_account(self):
         print('Change ok')
     def open_input_dialog_event(self):

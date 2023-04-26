@@ -29,6 +29,7 @@ class Generate:
 		return email
 	def random_password(self):
 		# generate a random password consisting of letters (both upper and lower case) and digits
-		alphabet = string.ascii_letters + string.digits
-		password = ''.join(random.choices(alphabet, k=12))
+		number_random = ''.join(random.choices(string.digits, k=4))
+		string_random = ''.join(random.choices(string.ascii_uppercase , k=4))
+		password = f"{string_random.lower()}{number_random}"
 		return password

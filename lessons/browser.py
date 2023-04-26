@@ -17,7 +17,9 @@ class Browser:
 		self.service = Service(driver)
 		self.options = webdriver.ChromeOptions()
 		self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
-
+		# self.options.add_argument("--disable-extensions")
+		# self.options.add_argument("--disable-gpu")
+		# self.options.add_argument("--headless")
 		self.browser = webdriver.Chrome(service=self.service,options= self.options)
 
 	def open_page(self, url: str):
@@ -166,4 +168,5 @@ class Browser:
 		wait = WebDriverWait(self.browser, 60)
 		wait.until(EC.element_to_be_clickable((by, value)))
 		element = self.browser.find_element(by, value)
-		return element
+		element.click()
+		

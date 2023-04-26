@@ -28,7 +28,7 @@ def action_register(browser):
 			page_loading = browser.page_loading()
 			if page_loading==False :
 				curentUrl = browser.browser.current_url
-				if curentUrl=='https://www.shophq.com/Account/Register':
+				if 'https://www.shophq.com/Account/RegisterConfirmation' in curentUrl:
 					if browser.check_Visible(by=By.ID, value='validate-email-proceed') == True :
 						time.sleep(3)
 						print('invalid email')
@@ -37,13 +37,18 @@ def action_register(browser):
 						browser.register_again(email=email)
 					else:
 						check_register = False
+						print('Register OK')
+						print(f'{email}|{password}')
+						with open('account.txt', 'w') as f:
+							f.write(f'{email}|{password}')
+						check_register = False
 				else:
 					print('Register OK')
 					print(f'{email}|{password}')
 					with open('account.txt', 'w') as f:
 						f.write(f'{email}|{password}')
 					check_register = False
-def action_make_order(browser):
+def action_make_order(browser,urls):
 	browser.browser.get(urls[0])
 	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.color-box-container:first-of-type')
 	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.size-box-container:first-of-type')
@@ -52,7 +57,7 @@ def action_make_order(browser):
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 def action_login(browser,mail,password):
-	browser.open_page('https://www.shophq.com/Account/Login')
+	
 	time.sleep(2)
 	browser.login(mail,password)
 	time.sleep(2)
@@ -74,7 +79,12 @@ def action_add_ship_address(browser,email,password,first_name,last_name,address,
 	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_City',text=city)
 	browser.select_option('ShippingAddresses_SelectedAddress_State',state)
 	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Zip',text=zip_code)
+	
 	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	try:
+		add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
+	except:
+		print('Ok ship address')
 
 def action_add_bill_address(browser,email,password,address,city,state,zip_code,phone):
 	browser.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
@@ -93,22 +103,32 @@ def action_add_bill_address(browser,email,password,address,city,state,zip_code,p
 	browser.select_option('BillingAddresses_SelectedAddress_State',state)
 	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_Zip',text=zip_code)
 	browser.add_input(by=By.ID,value='PhoneNumber',text=phone)
+	
 	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	try:
+		add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
+	except:
+		print('ok bill address')
+		
 
 
 def action_add_creadit(browser,number:str,month:str,year:str):
-	try:
-		radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
-	except:
-		print('expand')
-		page_loading= True
-		while page_loading:
-			page_loading = browser.page_loading()
-			if page_loading==False :
-				time.sleep(2)
-				edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
-				print('expand ok')
-				radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+	print('start click')
+	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+
+	# try:
+	# 	print('start click')
+	# 	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+	# except:
+	# 	print('expand')
+	# 	page_loading= True
+	# 	while page_loading:
+	# 		page_loading = browser.page_loading()
+	# 		if page_loading==False :
+	# 			time.sleep(2)
+	# 			edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
+	# 			print('expand ok')
+	# 			radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
 		
 		
 	
@@ -145,7 +165,7 @@ def action_place_my_order(browser):
 def save_result(line):
 	with open('result.txt', 'a') as f:
 		f.write('\n'+ line)
-if __name__ == '__main__':
+def run():
 	urls = []
 
 	# Read each line of the file and append to the urls array
@@ -186,7 +206,7 @@ if __name__ == '__main__':
 	browser = Browser('drivers/chromedriver')
 	# Register Account
 	# action_register(browser)
-
+	browser.open_page('https://www.shophq.com/Account/Login')
 	action_login(browser,email,password)
 	time.sleep(2)
 	page_loading =True
@@ -202,7 +222,7 @@ if __name__ == '__main__':
 	while page_loading:
 		page_loading = browser.page_loading()
 		if page_loading==False :
-			action_make_order(browser)
+			action_make_order(browser,urls)
 		time.sleep(3)
 	page_loading= True
 	while page_loading:
@@ -220,20 +240,21 @@ if __name__ == '__main__':
 					time.sleep(3)
 				except:
 					print('Da co thong tin bill address')
-			
+			elif 'https://www.shophq.com/Account/Login' in curentUrl:
+				try:
+					action_login(browser,email,password)
+				except:
+					print('Not')
 			else:
 				time.sleep(6)
 				print('Not make order')
-	
-		
-	
 	for i in range(len(list_creadit)):
 		# try:
 		number = list_creadit[i][0]
 		month = list_creadit[i][1]
 		year = list_creadit[i][2]
 		time.sleep(3)
-		action_add_creadit(browser,number,month,year)
+		# action_add_creadit(browser,number,month,year)
 			
 		try:
 			action_place_my_order(browser)

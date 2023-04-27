@@ -106,7 +106,9 @@ class Browser:
 				self.add_input(by=By.ID, value='RegisterEmailId', text=email)
 				time.sleep(3)
 				self.check_page_qc()
-				self.click_button(by=By.ID, value='submit-proceed')
+				print('start click submid-proceed')
+				# self.click_button(by=By.ID, value='submit-proceed')
+				self.excute_js('document.getElementById("submit-proceed").click()')
 	def check_Visible(self, by: By, value: str):
 		try:	
 			wait = WebDriverWait(self.browser, 10)
@@ -149,15 +151,17 @@ class Browser:
 	def add_ship_address(self):
 		wait = WebDriverWait(self.browser, 10)
 		wait.until(EC.presence_of_element_located((By.ID, 'shipping-addresses-section')))
-		ship_address_container = self.browser.find_element(By.ID, 'shipping-addresses-section')
-		try:
-			add_button = ship_address_container.find_element(By.CLASS_NAME,'add-address-btn')
-			add_button.click()	
-		except:
-			print('Not add ship address')
-			pass
+		click_add = self.excute_js1('$("#shipping-addresses-section > div:nth-child(3) > div > button").click();')
+		# try:
+			
+		# 	# add_button = ship_address_container.find_element(By.CLASS_NAME,'add-address-btn')
+		# 	# add_button.click()	
+		# except:
+		# 	print('Not add ship address')
+		# 	pass
 	def add_bill_address(self):
-		self.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
+		# self.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
+		click_add = self.excute_js1('$("#billing-addresses-section > div:nth-child(3) > div > button").click();')
 	def select_option(self,id: str,value:str):
 		wait = WebDriverWait(self.browser, 10)
 		wait.until(EC.presence_of_element_located((By.ID, id)))
@@ -168,5 +172,23 @@ class Browser:
 		wait = WebDriverWait(self.browser, 60)
 		wait.until(EC.element_to_be_clickable((by, value)))
 		element = self.browser.find_element(by, value)
+		print(element)
+		print('start click')
 		element.click()
+	def excute_js(self,cmd:str):
+		print('run',cmd)
+		self.browser.execute_script(cmd)
+	def excute_js1(self,cmd:str):
+		# 1) Get back to the main body page
+		self.browser.switch_to.default_content()
+
+		# 2) Download jquery lib file to your current folder manually & set path here
+		with open('./_lib/jquery-3.3.1.min.js', 'r') as jquery_js: 
+			# 3) Read the jquery from a file
+			jquery = jquery_js.read() 
+			# 4) Load jquery lib
+			self.browser.execute_script(jquery)
+			# 5) Execute your command 
+			# self.browser.execute_script('$("#myId").click()')
+			self.browser.execute_script(cmd)
 		

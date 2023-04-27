@@ -24,34 +24,39 @@ def action_register(browser):
 	password = generate.random_password()
 	print(first,last, email,password)
 	browser.register(first_name=first, last_name=last,email=email,password=password)
-	check_register = True
-	while check_register:
+	# check_register = True
+	# while check_register:
 		# loop when page finish
-		page_loading= True
-		while page_loading:
-			page_loading = browser.page_loading()
-			if page_loading==False :
-				curentUrl = browser.browser.current_url
-				if 'https://www.shophq.com/Account/RegisterConfirmation' in curentUrl:
-					if browser.check_Visible(by=By.ID, value='validate-email-proceed') == True :
-						time.sleep(3)
-						print('invalid email')
-						email = generate.random_email(last)
-						print(first,last, email,password)
-						browser.register_again(email=email)
-					else:
-						check_register = False
-						print('Register OK')
-						print(f'{email}|{password}')
-						with open(current_folder+'/account.txt', 'w') as f:
-							f.write(f'{email}|{password}')
-						check_register = False
-				else:
+	page_loading= True
+	while page_loading:
+		page_loading = browser.page_loading()
+		if page_loading==False :
+			curentUrl = browser.browser.current_url
+			if 'shophq.com/Account/RegisterConfirmation' not in curentUrl:
+				if browser.check_Visible(by=By.ID, value='validate-email-proceed') == True :
+					time.sleep(3)
+					print('invalid email')
+					email = generate.random_email(last)
+					print(first,last, email,password)
+					browser.register_again(email=email)
 					print('Register OK')
 					print(f'{email}|{password}')
 					with open(current_folder+'/account.txt', 'w') as f:
 						f.write(f'{email}|{password}')
-					check_register = False
+			else:
+				print('Register OK')
+				print(f'{email}|{password}')
+				with open(current_folder+'/account.txt', 'w') as f:
+					f.write(f'{email}|{password}')
+					# check_register = False
+	register = True
+	while register:
+		if 'shophq.com/Account/RegisterConfirmation' not in browser.browser.current_url:
+			time.sleep(2)
+		else:
+			register =False
+			print('ok continue')
+
 def action_make_order(browser,urls):
 	browser.browser.get(urls[0])
 	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.color-box-container:first-of-type')
@@ -59,6 +64,7 @@ def action_make_order(browser,urls):
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 	browser.click_button(by=By.ID,value="btn-quick-buy-pdp")
+	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 def action_login(browser,mail,password):
@@ -85,14 +91,16 @@ def action_add_ship_address(browser,email,password,first_name,last_name,address,
 	browser.select_option('ShippingAddresses_SelectedAddress_State',state)
 	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Zip',text=zip_code)
 	
-	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	# add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	add_address_button = browser.excute_js1('$("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
 	try:
-		add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
+		# add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
+		add_address_button = browser.excute_js1('$("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn").click();')
 	except:
 		print('Ok ship address')
 
 def action_add_bill_address(browser,email,password,address,city,state,zip_code,phone):
-	browser.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
+	browser.add_bill_address()
 	time.sleep(2)
 	page_loading= True
 	while page_loading:
@@ -109,8 +117,11 @@ def action_add_bill_address(browser,email,password,address,city,state,zip_code,p
 	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_Zip',text=zip_code)
 	browser.add_input(by=By.ID,value='PhoneNumber',text=phone)
 	
-	add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	# add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
+	
+	add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
 	try:
+		add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn").click();')
 		add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
 	except:
 		print('ok bill address')
@@ -118,12 +129,21 @@ def action_add_bill_address(browser,email,password,address,city,state,zip_code,p
 
 
 def action_add_creadit(browser,number:str,month:str,year:str):
+
 	print('start click')
-	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+	# radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+
+	# radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+	# radio_button =  browser.excute_js1('document.getElementById("cphBody_optCreditCards").click()')
+	radio_button = browser.excute_js1('$("#cphBody_optCreditCards").click();')
+	print('ok')
 
 	try:
 		print('start click')
-		radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+		# radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+		radio_button = browser.excute_js1('$("#cphBody_optCreditCards").click();')
+		# radio_button =  browser.excute_js('document.getElementById("cphBody_optCreditCards").click()')
+		print('ok')
 	except:
 		print('expand')
 		page_loading= True
@@ -133,14 +153,15 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 				time.sleep(2)
 				edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
 				print('expand ok')
-				radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+				# radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+				radio_button = browser.excute_js1('$("#cphBody_optCreditCards").click();')
 		
 		
 	
 	# check if the radio button is selected
 	if  radio_button.isSelected():
 		print('have exits credit')
-		browser.click_button(By.CSS_SELECTOR,'#cphBody_optNewCard')
+
 		time.sleep(2)
 		browser.add_input(By.ID,'cc_number',number)
 		browser.add_input(By.ID,'expiration-month',month)
@@ -150,8 +171,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.click_button(By.ID,'btnSaveCreditCard')
 		time.sleep(3)
 	else:
-		print(' not have exits credit')
-		browser.click_button(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+		
 		time.sleep(2)
 		browser.add_input(By.ID,'cc_number',number)
 		browser.add_input(By.ID,'expiration-month',month)
@@ -222,13 +242,25 @@ def run():
 			if 'www.shophq.com/?SignInSuccess=true' not in curentUrl:
 				action_register(browser)
 	time.sleep(2)
+	
 	# go to product and Buy
+	print(browser.browser.current_url)
+
 	page_loading= True
 	while page_loading:
 		page_loading = browser.page_loading()
 		if page_loading==False :
 			action_make_order(browser,urls)
 		time.sleep(3)
+
+	quick_buy_check = True
+	while quick_buy_check:
+		if 'shophq.com/Checkout/QuickBuy' in browser.browser.current_url:
+			time.sleep(2)
+		else:
+			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+			regquick_buy_checkister =False
+			print('ok continue')
 	page_loading= True
 	while page_loading:
 		page_loading = browser.page_loading()
@@ -236,11 +268,14 @@ def run():
 			curentUrl = browser.browser.current_url
 			if 'shophq.com/Checkout/QuickBuy' in curentUrl:
 				try:
+					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 					action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
 					time.sleep(3)
 				except:
+					
 					print('Da co thong tin ship address')
 				try:
+					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 					action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
 					time.sleep(3)
 				except:
@@ -259,7 +294,7 @@ def run():
 		month = list_creadit[i][1]
 		year = list_creadit[i][2]
 		time.sleep(3)
-		# action_add_creadit(browser,number,month,year)
+		action_add_creadit(browser,number,month,year)
 			
 		try:
 			action_place_my_order(browser)

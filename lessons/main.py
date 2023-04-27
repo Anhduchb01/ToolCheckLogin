@@ -9,6 +9,10 @@ from selenium.common.exceptions import NoSuchElementException
 from generate import Generate
 from browser import Browser
 
+import os
+
+# Get the current folder
+current_folder = os.getcwd()
 def action_register(browser):
 	generate = Generate()
 	browser.open_page('https://www.shophq.com/Account/Register')
@@ -39,13 +43,13 @@ def action_register(browser):
 						check_register = False
 						print('Register OK')
 						print(f'{email}|{password}')
-						with open('account.txt', 'w') as f:
+						with open(current_folder+'/account.txt', 'w') as f:
 							f.write(f'{email}|{password}')
 						check_register = False
 				else:
 					print('Register OK')
 					print(f'{email}|{password}')
-					with open('account.txt', 'w') as f:
+					with open(current_folder+'/account.txt', 'w') as f:
 						f.write(f'{email}|{password}')
 					check_register = False
 def action_make_order(browser,urls):
@@ -53,6 +57,7 @@ def action_make_order(browser,urls):
 	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.color-box-container:first-of-type')
 	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.size-box-container:first-of-type')
 	time.sleep(2)
+	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 	browser.click_button(by=By.ID,value="btn-quick-buy-pdp")
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
@@ -116,19 +121,19 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 	print('start click')
 	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
 
-	# try:
-	# 	print('start click')
-	# 	radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
-	# except:
-	# 	print('expand')
-	# 	page_loading= True
-	# 	while page_loading:
-	# 		page_loading = browser.page_loading()
-	# 		if page_loading==False :
-	# 			time.sleep(2)
-	# 			edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
-	# 			print('expand ok')
-	# 			radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
+	try:
+		print('start click')
+		radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+	except:
+		print('expand')
+		page_loading= True
+		while page_loading:
+			page_loading = browser.page_loading()
+			if page_loading==False :
+				time.sleep(2)
+				edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
+				print('expand ok')
+				radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
 		
 		
 	
@@ -163,26 +168,26 @@ def action_place_my_order(browser):
 		browser.click_button(By.CSS_SELECTOR,'#PlaceOrderForm > button')
 	time.sleep(3)
 def save_result(line):
-	with open('result.txt', 'a') as f:
+	with open(current_folder+'/result.txt', 'a') as f:
 		f.write('\n'+ line)
 def run():
 	urls = []
 
 	# Read each line of the file and append to the urls array
-	with open('url_product.txt', 'r') as f:
+	with open(current_folder+'/url_product.txt', 'r') as f:
 		for line in f:
 			url = line.strip()
 			urls.append(url)
 	print(urls)
 	# Load the first URL using the webdriver object
-	with open('account.txt', 'r') as f:
+	with open(current_folder+'/account.txt', 'r') as f:
 		for line in f:
 			email, password = line.strip().split('|')
 			email = email.replace(' ','')
 			password= password.replace(' ','')
 	print(email,password)
 	form_ship_address = []
-	with open('ship_address.txt', 'r') as f:
+	with open(current_folder+'/ship_address.txt', 'r') as f:
 		for line in f:
 			# Split the line into separate fields
 			raw = line.strip()
@@ -198,7 +203,7 @@ def run():
 	phone = form_ship_address[6]
 	list_creadit = []
 	
-	with open('credit.txt', 'r') as f:
+	with open(current_folder+'/credit.txt', 'r') as f:
 		for line in f:
 			number, month, year = line.strip().split('|')
 			list_creadit.append([number, month, year])

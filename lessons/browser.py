@@ -57,6 +57,14 @@ class Browser:
 		field.clear()
 		field.send_keys(text)
 		time.sleep(1)
+	def send_keys_js(self, by, value, text):
+		cmd = f"""$('[{by}="{value}"]').val("{text}").trigger('change');"""
+		self.excute_js1(cmd)
+
+	def add_input_js(self,by, value, text):
+		cmd = f"""$("#{value}").val("{str(text)}");"""
+		print('run CMD',cmd)
+		self.excute_js1(cmd)
 	def login(self, username: str, password: str):
 		print(username+'|'+password+'|')
 		self.add_input(by=By.ID, value='PasswordEmail', text=username)
@@ -136,21 +144,23 @@ class Browser:
 			button.click()
 		time.sleep(3)
 	def turn_off_modal(self, by: By, value: str):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((by, value)))
-		color_box_container = self.browser.find_element(by,value)
-		# wait.until(EC.visibility_of((By.CLASS_NAME,'close')))
 		try:
-			wait = WebDriverWait(self.browser, 10)
-			wait.until(EC.presence_of_element_located((By.ID, 'btnDecline')))
+			wait = WebDriverWait(self.browser, 2)
+			wait.until(EC.presence_of_element_located((by, value)))
+			color_box_container = self.browser.find_element(by,value)
+			wait1 = WebDriverWait(self.browser, 2)
+			wait1.until(EC.presence_of_element_located((By.ID, 'btnDecline')))
 			exit_button = color_box_container.find_element(By.ID,'btnDecline')
 			exit_button.click()
 		except:
 			print('Not show')
 			pass
 	def add_ship_address(self):
-		wait = WebDriverWait(self.browser, 10)
-		wait.until(EC.presence_of_element_located((By.ID, 'shipping-addresses-section')))
+		while True:
+			if self.page_loading() :
+				time.sleep(3)
+			else:
+				break
 		click_add = self.excute_js1('$("#shipping-addresses-section > div:nth-child(3) > div > button").click();')
 		# try:
 			
@@ -160,7 +170,11 @@ class Browser:
 		# 	print('Not add ship address')
 		# 	pass
 	def add_bill_address(self):
-		# self.click_button(By.CSS_SELECTOR,'#billing-addresses-section > div:nth-child(3) > div > button')
+		while True:
+			if self.page_loading() :
+				time.sleep(3)
+			else:
+				break
 		click_add = self.excute_js1('$("#billing-addresses-section > div:nth-child(3) > div > button").click();')
 	def select_option(self,id: str,value:str):
 		wait = WebDriverWait(self.browser, 10)
@@ -179,16 +193,15 @@ class Browser:
 		print('run',cmd)
 		self.browser.execute_script(cmd)
 	def excute_js1(self,cmd:str):
-		# 1) Get back to the main body page
+		while True:
+			if self.page_loading() :
+				time.sleep(3)
+			else:
+				break
 		self.browser.switch_to.default_content()
-
-		# 2) Download jquery lib file to your current folder manually & set path here
-		with open('./_lib/jquery-3.3.1.min.js', 'r') as jquery_js: 
-			# 3) Read the jquery from a file
+		print('Run CMD',cmd)
+		with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
 			jquery = jquery_js.read() 
-			# 4) Load jquery lib
 			self.browser.execute_script(jquery)
-			# 5) Execute your command 
-			# self.browser.execute_script('$("#myId").click()')
-			self.browser.execute_script(cmd)
+			return self.browser.execute_script(cmd)
 		

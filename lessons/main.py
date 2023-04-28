@@ -84,20 +84,21 @@ def action_add_ship_address(browser,email,password,first_name,last_name,address,
 				browser.remove_input(By.ID,'PasswordEmail')
 				action_login(browser,email,password)
 	
-	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_FirstName',text=first_name)
-	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_LastName',text=last_name)
-	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Address1',text=address)
-	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_City',text=city)
+	browser.add_input_js(by=By.ID,value='ShippingAddresses_SelectedAddress_FirstName',text=first_name)
+	browser.add_input_js(by=By.ID,value='ShippingAddresses_SelectedAddress_LastName',text=last_name)
+	browser.add_input_js(by=By.ID,value='ShippingAddresses_SelectedAddress_Address1',text=address)
+	browser.add_input_js(by=By.ID,value='ShippingAddresses_SelectedAddress_City',text=city)
 	browser.select_option('ShippingAddresses_SelectedAddress_State',state)
-	browser.add_input(by=By.ID,value='ShippingAddresses_SelectedAddress_Zip',text=zip_code)
+	browser.add_input_js(by=By.ID,value='ShippingAddresses_SelectedAddress_Zip',text=zip_code)
 	
-	# add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
-	add_address_button = browser.excute_js1('$("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
-	try:
-		# add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
+	check_address_button = browser.excute_js1('return $("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").length >0 ;')
+	if check_address_button :
+		add_address_button = browser.excute_js1('$("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
+	check_address_button_overide = browser.excute_js1('return $("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn").length > 0 ;')
+	if check_address_button_overide :
+	
 		add_address_button = browser.excute_js1('$("#save-shipping-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn").click();')
-	except:
-		print('Ok ship address')
+
 
 def action_add_bill_address(browser,email,password,address,city,state,zip_code,phone):
 	browser.add_bill_address()
@@ -111,81 +112,121 @@ def action_add_bill_address(browser,email,password,address,city,state,zip_code,p
 				browser.remove_input(By.ID,'PasswordEmail')
 				action_login(browser,email,password)
 	
-	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_Address1',text=address)
-	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_City',text=city)
+	browser.add_input_js(by=By.ID,value='BillingAddresses_SelectedAddress_Address1',text=address)
+	browser.add_input_js(by=By.ID,value='BillingAddresses_SelectedAddress_City',text=city)
 	browser.select_option('BillingAddresses_SelectedAddress_State',state)
-	browser.add_input(by=By.ID,value='BillingAddresses_SelectedAddress_Zip',text=zip_code)
-	browser.add_input(by=By.ID,value='PhoneNumber',text=phone)
+	browser.add_input_js(by=By.ID,value='BillingAddresses_SelectedAddress_Zip',text=zip_code)
+	browser.add_input_js(by=By.ID,value='PhoneNumber',text=phone)
 	
-	# add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn")
-	
-	add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
-	try:
-		add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn").click();')
-		add_address_button = browser.click_button(By.CSS_SELECTOR,"#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn")
-	except:
-		print('ok bill address')
+	check_address_button = browser.excute_js1('return $("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").length >0 ;')
+	if check_address_button :
+		add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
+	check_address_button_overide = browser.excute_js1('return $("#save-billing-address-section > div:nth-child(10) > div > div > button.btn.btn-outline-primary.save-address-btn").length >0 ;')
+	if check_address_button_overide :
+		add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(10) > div > div > button.btn.btn-outline-primary.save-address-btn").click();')
+	# try:
+	# 	add_address_button = browser.excute_js1('$("#save-billing-address-section > div:nth-child(11) > div > div > button.btn.btn-outline-primary.save-override-address-btn").click();')
+	# except:
+	# 	print('ok bill address')
 		
 
 
 def action_add_creadit(browser,number:str,month:str,year:str):
 
 	print('start click')
-	# radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
+	while True:
+		if browser.page_loading() :
+			time.sleep(4)
+		else:
+			break
+	print('load ok')
+	check_error = browser.excute_js1('return $("#checkout-error").length > 0;')
+	if check_error:
+		loop = True
+		while loop:
+			while True:
+				if browser.page_loading() :
+					time.sleep(4)
+				else:
+					break
+			print('load ok')
+			click_edit = browser.excute_js1('$("#payment-collapse-button-title").click()')
+			time.sleep(10)
+			reFresh = True
+			i=0
+			while i<10:
+				i+=1
+				time.sleep(30)
+				exists = browser.excute_js1('return $("#cphBody_optCreditCards").length > 0;')
+				print(exists)
+				if exists:
+					print('da click')
+					browser.excute_js1('$("#cphBody_optCreditCards").click();')
+					reFresh = False
+					loop = False
+					break
+			if reFresh:
+				print('refresh')
+				browser.browser.refresh()
 
-	# radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
-	# radio_button =  browser.excute_js1('document.getElementById("cphBody_optCreditCards").click()')
-	radio_button = browser.excute_js1('$("#cphBody_optCreditCards").click();')
-	print('ok')
-
-	try:
-		print('start click')
-		# radio_button = browser.find_element_input(By.ID,'cphBody_optCreditCards')
-		radio_button = browser.excute_js1('$("#cphBody_optCreditCards").click();')
-		# radio_button =  browser.excute_js('document.getElementById("cphBody_optCreditCards").click()')
 		print('ok')
-	except:
-		print('expand')
-		page_loading= True
-		while page_loading:
-			page_loading = browser.page_loading()
-			if page_loading==False :
-				time.sleep(2)
-				edit_credit = browser.click_button(By.CSS_SELECTOR,'#MainContent > div.checkout-page-body > div > div.col-sm-12.col-md-8 > div:nth-child(4) > div > div:nth-child(6) > div.col-sm-4.col-xs-4.checkout-section-header-button > a')
-				print('expand ok')
-				# radio_button = browser.find_element_input(By.CSS_SELECTOR,'#cphBody_optCreditCards')
-				radio_button = browser.excute_js1('$("#cphBody_optCreditCards").click();')
-		
-		
-	
-	# check if the radio button is selected
-	if  radio_button.isSelected():
-		print('have exits credit')
-
 		time.sleep(2)
-		browser.add_input(By.ID,'cc_number',number)
-		browser.add_input(By.ID,'expiration-month',month)
-		browser.add_input(By.ID,'expiration-year',year)
-		browser.add_input(By.ID,'cc_cvv','000')
-		time.sleep(3)
-		browser.click_button(By.ID,'btnSaveCreditCard')
-		time.sleep(3)
+		browser.add_input_js(By.ID,'cc_number',number)
+		browser.add_input_js(By.ID,'expiration-month',month)
+		browser.add_input_js(By.ID,'expiration-year',year)
+		browser.add_input_js(By.ID,'cc_cvv','000')
+		browser.excute_js1('$("#btnSaveCreditCard").click();')
+		
 	else:
-		
+		loop = True
+		while loop:
+			while True:
+				if browser.page_loading() :
+					time.sleep(4)
+				else:
+					break
+			print('load ok')
+			time.sleep(10)
+			element = browser.browser.find_element(By.ID,'ifmCCForm')
+			print(element)
+			html = element.get_attribute("innerHTML")
+			print(html)
+			browser.browser.switch_to.frame(browser.browser.find_element(By.ID,'ifmCCForm'))
+			
+			print('ok')
+			html = browser.browser.execute_script("return document.documentElement.outerHTML;")
+			print(html)
+			reFresh = True
+			i=0
+			while i<10:
+				i+=1
+				time.sleep(40)
+				exists = browser.excute_js1('return $("#cphBody_optCreditCards").length > 0;')
+				print(exists)
+				if exists:
+					print('da click')
+					browser.excute_js1('$("#cphBody_optCreditCards").click();')
+					reFresh = False
+					loop = False
+					break
+			if reFresh:
+				print('refresh')
+				browser.browser.refresh()
+
+		print('ok')
 		time.sleep(2)
-		browser.add_input(By.ID,'cc_number',number)
-		browser.add_input(By.ID,'expiration-month',month)
-		browser.add_input(By.ID,'expiration-year',year)
-		browser.add_input(By.ID,'cc_cvv','000')
-		time.sleep(3)
-		browser.click_button(By.ID,'btnSaveCreditCard')
-		time.sleep(3)
+		browser.add_input_js(By.ID,'cc_number',number)
+		browser.add_input_js(By.ID,'expiration-month',month)
+		browser.add_input_js(By.ID,'expiration-year',year)
+		browser.add_input_js(By.ID,'cc_cvv','000')
+		browser.excute_js1('$("#btnSaveCreditCard").click();')
+		
 def action_place_my_order(browser):
 	time.sleep(3)
 	try:
-		browser.click_button(By.CSS_SELECTOR,'#PlaceOrderFormTop > button')
+		browser.excute_js1('$("#PlaceOrderFormTop > button").click();')
 	except:
-		browser.click_button(By.CSS_SELECTOR,'#PlaceOrderForm > button')
+		browser.excute_js1('$("#PlaceOrderForm > button > button").click();')
 	time.sleep(3)
 def save_result(line):
 	with open(current_folder+'/result.txt', 'a') as f:
@@ -221,6 +262,7 @@ def run():
 	state = form_ship_address[4]
 	zip_code = form_ship_address[5]
 	phone = form_ship_address[6]
+	check_box_exist_info = form_ship_address[7]
 	list_creadit = []
 	
 	with open(current_folder+'/credit.txt', 'r') as f:
@@ -255,31 +297,35 @@ def run():
 
 	quick_buy_check = True
 	while quick_buy_check:
-		if 'shophq.com/Checkout/QuickBuy' in browser.browser.current_url:
+		if 'shophq.com/Checkout/QuickBuy' not in browser.browser.current_url:
+			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 			time.sleep(2)
 		else:
 			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-			regquick_buy_checkister =False
+			quick_buy_check =False
 			print('ok continue')
 	page_loading= True
 	while page_loading:
 		page_loading = browser.page_loading()
+
 		if page_loading==False :
 			curentUrl = browser.browser.current_url
 			if 'shophq.com/Checkout/QuickBuy' in curentUrl:
-				try:
+				# try:
+				print(check_box_exist_info)
+				if check_box_exist_info == "0" or check_box_exist_info ==0:
 					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 					action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
 					time.sleep(3)
-				except:
-					
-					print('Da co thong tin ship address')
-				try:
+					# except :
+						
+					# 	print('Da co thong tin ship address')
+					# try:
 					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 					action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
 					time.sleep(3)
-				except:
-					print('Da co thong tin bill address')
+				# except:
+				# 	print('Da co thong tin bill address')
 			elif 'https://www.shophq.com/Account/Login' in curentUrl:
 				try:
 					action_login(browser,email,password)
@@ -288,6 +334,7 @@ def run():
 			else:
 				time.sleep(6)
 				print('Not make order')
+		time.sleep(3)
 	for i in range(len(list_creadit)):
 		# try:
 		number = list_creadit[i][0]

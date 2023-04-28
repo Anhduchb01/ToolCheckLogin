@@ -15,7 +15,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.load_data()
-        
+        self.exist_info = False
         # configure window
         self.title("Tool Check Credit")
         self.geometry(f"{1100}x{640}")
@@ -92,7 +92,7 @@ class App(customtkinter.CTk):
         self.slider_progressbar_frame.grid_columnconfigure(0, weight=1)
         self.slider_progressbar_frame.grid_columnconfigure(1, weight=2)
         
-        self.slider_progressbar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8), weight=1)
+        self.slider_progressbar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
         self.label_radio_group = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="Thông tin tài khoản")
         self.label_radio_group.grid(row=0, column=0 ,columnspan = 2)
         self.label_firstname = customtkinter.CTkLabel(master=self.slider_progressbar_frame, text="First Name :")
@@ -135,6 +135,11 @@ class App(customtkinter.CTk):
                                                            command=self.save_info)
         self.string_input_button.grid(row=8, column=0,columnspan = 2,pady=(10,10))
         
+        self.radio_var_exist_info = tkinter.IntVar(value=0)
+       
+        self.check_box_exist_info = customtkinter.CTkCheckBox(master=self.slider_progressbar_frame,checkbox_width=18,checkbox_height=18)
+
+        self.check_box_exist_info.grid(row=9, column=0,columnspan = 2 ,pady=(10,10))
         # create url_product and result frame
 
         self.url_product_frame = customtkinter.CTkFrame(self)
@@ -158,6 +163,10 @@ class App(customtkinter.CTk):
         self.textbox_result.grid(row=5, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
 
         #setup 
+        if self.box_exist_info ==1 or self.box_exist_info =="1":
+            self.check_box_exist_info.select()
+        else:
+            self.check_box_exist_info.deselect()
         self.entry_email.bind(command=self.change_account)
         self.textbox_result.configure(state="disabled")
         self.textbox_product.insert("0.0",self.string_url_product)
@@ -205,6 +214,7 @@ class App(customtkinter.CTk):
         self.state_city = customtkinter.StringVar(value=form_ship_address[4])
         self.zip_code = customtkinter.StringVar(value=form_ship_address[5])
         self.phone = customtkinter.StringVar(value=form_ship_address[6])
+        self.box_exist_info = form_ship_address[7]
         self.list_creadit = []
         credit =  open(current_folder+'/credit.txt', 'r')
         for line in credit:
@@ -217,7 +227,7 @@ class App(customtkinter.CTk):
             # self.save_account_button.configure(state="disabled",text="Saved")
     def save_info(self):
         with open(current_folder+'/ship_address.txt', 'w') as f :
-            ship_adress_form = str(self.first_name.get()) +"\n" +str(self.last_name.get()) +"\n" +str(self.address.get()) +"\n" +str(self.city.get()) +"\n"+str(self.state_city.get()) +"\n" +str(self.zip_code.get()) +"\n" +str(self.phone.get())
+            ship_adress_form = str(self.first_name.get()) +"\n" +str(self.last_name.get()) +"\n" +str(self.address.get()) +"\n" +str(self.city.get()) +"\n"+str(self.state_city.get()) +"\n" +str(self.zip_code.get()) +"\n" +str(self.phone.get())+"\n" +str(self.check_box_exist_info.get())
             print(ship_adress_form)
             f.write(ship_adress_form)
     def save_url_product(self):

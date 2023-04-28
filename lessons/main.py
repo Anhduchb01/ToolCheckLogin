@@ -201,11 +201,11 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			while i<10:
 				i+=1
 				time.sleep(40)
-				exists = browser.excute_js1('return $("#cphBody_optCreditCards").length > 0;')
+				exists = browser.excute_js2('return $("#cphBody_optCreditCards").length > 0;')
 				print(exists)
 				if exists:
 					print('da click')
-					browser.excute_js1('$("#cphBody_optCreditCards").click();')
+					browser.excute_js2('$("#cphBody_optCreditCards").click();')
 					reFresh = False
 					loop = False
 					break
@@ -219,7 +219,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.add_input_js(By.ID,'expiration-month',month)
 		browser.add_input_js(By.ID,'expiration-year',year)
 		browser.add_input_js(By.ID,'cc_cvv','000')
-		browser.excute_js1('$("#btnSaveCreditCard").click();')
+		browser.excute_js2('$("#btnSaveCreditCard").click();')
 		
 def action_place_my_order(browser):
 	time.sleep(3)

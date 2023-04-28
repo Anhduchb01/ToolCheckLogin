@@ -64,7 +64,7 @@ class Browser:
 	def add_input_js(self,by, value, text):
 		cmd = f"""$("#{value}").val("{str(text)}");"""
 		print('run CMD',cmd)
-		self.excute_js1(cmd)
+		self.excute_js2(cmd)
 	def login(self, username: str, password: str):
 		print(username+'|'+password+'|')
 		self.add_input(by=By.ID, value='PasswordEmail', text=username)
@@ -204,4 +204,11 @@ class Browser:
 			jquery = jquery_js.read() 
 			self.browser.execute_script(jquery)
 			return self.browser.execute_script(cmd)
+	def excute_js2(self,cmd:str):
+		while True:
+			if self.page_loading() :
+				time.sleep(3)
+			else:
+				break
 		
+		return self.browser.execute_script(cmd)		

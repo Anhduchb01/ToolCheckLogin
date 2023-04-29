@@ -63,7 +63,6 @@ class Browser:
 
 	def add_input_js(self,by, value, text):
 		cmd = f"""$("#{value}").val("{str(text)}");"""
-		print('run CMD',cmd)
 		self.excute_js2(cmd)
 	def login(self, username: str, password: str):
 		print(username+'|'+password+'|')
@@ -210,5 +209,9 @@ class Browser:
 				time.sleep(3)
 			else:
 				break
+		print('Run CMD',cmd)
+		# with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
+		# 	jquery = jquery_js.read() 
+		# 	self.browser.execute_script(jquery)
 		
 		return self.browser.execute_script(cmd)		

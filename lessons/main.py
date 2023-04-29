@@ -142,6 +142,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 	print('load ok')
 	check_error = browser.excute_js1('return $("#checkout-error").length > 0;')
 	if check_error:
+		print('If')
 		loop = True
 		while loop:
 			while True:
@@ -171,13 +172,14 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 
 		print('ok')
 		time.sleep(2)
-		browser.add_input_js(By.ID,'cc_number',number)
-		browser.add_input_js(By.ID,'expiration-month',month)
-		browser.add_input_js(By.ID,'expiration-year',year)
-		browser.add_input_js(By.ID,'cc_cvv','000')
+		browser.add_input(By.ID,'cc_number',number)
+		browser.add_input(By.ID,'expiration-month',month)
+		browser.add_input(By.ID,'expiration-year',year)
+		browser.add_input(By.ID,'cc_cvv','000')
 		browser.excute_js1('$("#btnSaveCreditCard").click();')
 		
 	else:
+		print('Else')
 		loop = True
 		while loop:
 			while True:
@@ -187,15 +189,23 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 					break
 			print('load ok')
 			time.sleep(10)
-			element = browser.browser.find_element(By.ID,'ifmCCForm')
-			print(element)
-			html = element.get_attribute("innerHTML")
-			print(html)
-			browser.browser.switch_to.frame(browser.browser.find_element(By.ID,'ifmCCForm'))
+			try:
+				wait = WebDriverWait(browser.browser, 30)
+				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+				element = browser.browser.find_element(By.ID,'ifmCCForm')
+			except:
+				print('refresh')
+				browser.browser.refresh()
+				wait = WebDriverWait(browser.browser, 30)
+				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+				element = browser.browser.find_element(By.ID,'ifmCCForm')
+
+			browser.browser.switch_to.frame(element)
 			
 			print('ok')
-			html = browser.browser.execute_script("return document.documentElement.outerHTML;")
-			print(html)
+			# buttonn1 = browser.browser.find_element(by=By.ID, value='cphBody_optCreditCards')
+			# print(buttonn1)
+			# buttonn1.click()
 			reFresh = True
 			i=0
 			while i<10:

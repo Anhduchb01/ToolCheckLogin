@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from generate import Generate
 from browser import Browser
-
+from selenium.webdriver.common.action_chains import ActionChains
 import os
 
 # Get the current folder
@@ -210,9 +210,10 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			i=0
 			while i<10:
 				i+=1
-				time.sleep(40)
+				
 				exists = browser.excute_js2('return $("#cphBody_optCreditCards").length > 0;')
 				print(exists)
+				time.sleep(40)
 				if exists:
 					print('da click')
 					browser.excute_js2('$("#cphBody_optCreditCards").click();')
@@ -225,10 +226,36 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 
 		print('ok')
 		time.sleep(2)
-		browser.add_input_js(By.ID,'cc_number',number)
-		browser.add_input_js(By.ID,'expiration-month',month)
-		browser.add_input_js(By.ID,'expiration-year',year)
-		browser.add_input_js(By.ID,'cc_cvv','000')
+
+		# Create an ActionChains object and move to the coordinates
+		actions = ActionChains(browser.browser)
+		actions.move_by_offset(6.15625, 215.78125).click().perform()
+		actions.send_keys(number).perform()
+		time.sleep(2)
+		print('number ok')
+
+		actions.move_by_offset(228.25, 197.28125).click().perform()
+		actions.send_keys(month).perform()
+		print('month ok')
+		time.sleep(2)
+
+
+		actions.move_by_offset(296.09375, 197.28125).click().perform()
+		actions.send_keys(year).perform()
+		time.sleep(2)
+		print('year ok')
+
+		actions.move_by_offset(394.796875, 197.28125).click().perform()
+		actions.send_keys('000').perform()
+		time.sleep(2)
+		print('000 ok')
+		# Send keys directly to the input field
+		# actions = ActionChains(driver)
+		
+		# browser.add_input_js(By.ID,'cc_number',number)
+		# browser.add_input_js(By.ID,'expiration-month',month)
+		# browser.add_input_js(By.ID,'expiration-year',year)
+		# browser.add_input_js(By.ID,'cc_cvv','000')
 		browser.excute_js2('$("#btnSaveCreditCard").click();')
 		
 def action_place_my_order(browser):

@@ -251,8 +251,10 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		print('start click save')
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
+		print('Current iframe',browser.browser.current_url)
 		browser.excute_js2('$("#btnSaveCreditCard").click();')
 		browser.browser.switch_to.default_content()
+		print('Current iframe',browser.browser.current_url)
 		
 	else:
 		print('Else')
@@ -365,8 +367,10 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		print('start click save')
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
+		print('Current iframe',browser.browser.current_url)
 		browser.excute_js2('$("#btnSaveCreditCard").click();')
 		browser.browser.switch_to.default_content()
+		print('Current iframe',browser.browser.current_url)
 		
 def action_place_my_order(browser):
 	browser.browser.switch_to.default_content()
@@ -533,7 +537,16 @@ def run():
 				break
 			except:
 				print('refresh')
+				browser.browser.switch_to.default_content()
+
+				print('Current iframe',browser.browser.current_url)
+				wait = WebDriverWait(browser.browser, 30)
+				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+				element = browser.browser.find_element(By.ID,'ifmCCForm')
+
+				browser.browser.switch_to.frame(element)
 				browser.browser.refresh()
+				# browser.browser.get(browser.browser.current_url)
 				
 			
 		while True:
@@ -560,6 +573,14 @@ def run():
 			print('thanh toan duwoc')
 			line= f'{number}|{month}|{year}|pass'
 			save_result(line)
+		print('Current iframe',browser.browser.current_url)
+		browser.browser.switch_to.default_content()
+		wait = WebDriverWait(browser.browser, 30)
+		wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+		element = browser.browser.find_element(By.ID,'ifmCCForm')
+
+		browser.browser.switch_to.frame(element)
 		browser.browser.refresh()
+		# browser.browser.get(browser.browser.current_url)
 	browser.close_browser()
 	

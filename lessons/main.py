@@ -36,7 +36,7 @@ def action_register(browser):
 				if browser.check_Visible(by=By.ID, value='validate-email-proceed') == True :
 					time.sleep(3)
 					print('invalid email')
-					email = generate.random_email(last)
+					# email = generate.random_email(last)
 					print(first,last, email,password)
 					browser.register_again(email=email)
 					print('Register OK')
@@ -59,8 +59,15 @@ def action_register(browser):
 
 def action_make_order(browser,urls):
 	browser.browser.get(urls[0])
-	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.color-box-container:first-of-type')
-	browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.size-box-container:first-of-type')
+	try:
+		browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.color-box-container:first-of-type')
+	except:
+		print('not have type color')
+	try:
+		browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.size-box-container:first-of-type')
+	except:
+		print('not have type size')
+	
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 	browser.click_button(by=By.ID,value="btn-quick-buy-pdp")
@@ -141,8 +148,9 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			break
 	print('load ok')
 	check_error = browser.excute_js1('return $("#checkout-error").length > 0;')
+	
 	if check_error:
-		print('If')
+		print('if')
 		loop = True
 		while loop:
 			while True:
@@ -153,18 +161,37 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			print('load ok')
 			click_edit = browser.excute_js1('$("#payment-collapse-button-title").click()')
 			time.sleep(10)
+			try:
+				wait = WebDriverWait(browser.browser, 30)
+				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+				element = browser.browser.find_element(By.ID,'ifmCCForm')
+			except:
+				print('refresh')
+				browser.browser.refresh()
+				wait = WebDriverWait(browser.browser, 30)
+				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+				element = browser.browser.find_element(By.ID,'ifmCCForm')
+
+			browser.browser.switch_to.frame(element)
+			
+			print('ok')
+			# buttonn1 = browser.browser.find_element(by=By.ID, value='cphBody_optCreditCards')
+			# print(buttonn1)
+			# buttonn1.click()
 			reFresh = True
 			i=0
 			while i<10:
 				i+=1
-				time.sleep(30)
-				exists = browser.excute_js1('return $("#cphBody_optCreditCards").length > 0;')
+				
+				exists = browser.excute_js2('return $("#cphBody_optNewCard").length > 0;')
 				print(exists)
+				time.sleep(10)
 				if exists:
 					print('da click')
-					browser.excute_js1('$("#cphBody_optCreditCards").click();')
+					browser.excute_js2('$("#cphBody_optNewCard").click();')
 					reFresh = False
 					loop = False
+					time.sleep(30)
 					break
 			if reFresh:
 				print('refresh')
@@ -172,11 +199,60 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 
 		print('ok')
 		time.sleep(2)
-		browser.add_input(By.ID,'cc_number',number)
+		print('start add')
+		
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-number')))
+		element_cc_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-number')
+		browser.browser.switch_to.frame(element_cc_iframe)
+		time.sleep(30)
+		browser.add_input(By.ID,'credit-card-number',number)
+		print('Add cc number OK')
+		time.sleep(5)
+
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-expirationMonth')))
+		element_month_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-expirationMonth')
+		browser.browser.switch_to.frame(element_month_iframe)
 		browser.add_input(By.ID,'expiration-month',month)
+		print('Add month  OK')
+		time.sleep(5)
+
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-expirationYear')))
+		element_year_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-expirationYear')
+		browser.browser.switch_to.frame(element_year_iframe)
 		browser.add_input(By.ID,'expiration-year',year)
-		browser.add_input(By.ID,'cc_cvv','000')
-		browser.excute_js1('$("#btnSaveCreditCard").click();')
+		print('Add year  OK')
+		time.sleep(5)
+		
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'cc_cvv')))
+		element_cvv_parent_iframe = browser.browser.find_element(By.ID, 'cc_cvv')
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-cvv')))
+		element_cvv_iframe = element_cvv_parent_iframe.find_element(By.ID, 'braintree-hosted-field-cvv')
+		browser.browser.switch_to.frame(element_cvv_iframe)
+
+		print(element_cvv_iframe)
+		iframe_html = browser.browser.execute_script("return document.body.innerHTML;")
+		print(iframe_html)
+		# Scroll the element into view using JavaScript
+		
+		browser.add_input_1(By.NAME,'cvv','000')
+		print('Add ccv  OK')
+		time.sleep(5)
+
+		print('start click save')
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		browser.excute_js2('$("#btnSaveCreditCard").click();')
+		browser.browser.switch_to.default_content()
 		
 	else:
 		print('Else')
@@ -210,60 +286,133 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			i=0
 			while i<10:
 				i+=1
+				exists_card = browser.excute_js2('return $("#cphBody_optNewCard").length > 0;')
+				if exists_card:
+					exists = browser.excute_js2('return $("#cphBody_optNewCard").length > 0;')
+					print(exists)
+					time.sleep(10)
+					if exists:
+						print('da click')
+						browser.excute_js2('$("#cphBody_optNewCard").click();')
+						reFresh = False
+						loop = False
+						time.sleep(30)
+						break
 				
-				exists = browser.excute_js2('return $("#cphBody_optCreditCards").length > 0;')
-				print(exists)
-				time.sleep(40)
-				if exists:
-					print('da click')
-					browser.excute_js2('$("#cphBody_optCreditCards").click();')
-					reFresh = False
-					loop = False
-					break
+				else:
+					exists = browser.excute_js2('return $("#cphBody_optCreditCards").length > 0;')
+					print(exists)
+					time.sleep(10)
+					if exists:
+						print('da click')
+						browser.excute_js2('$("#cphBody_optCreditCards").click();')
+						reFresh = False
+						loop = False
+						break
 			if reFresh:
 				print('refresh')
 				browser.browser.refresh()
 
 		print('ok')
 		time.sleep(2)
-
-		# Create an ActionChains object and move to the coordinates
-		actions = ActionChains(browser.browser)
-		actions.move_by_offset(6.15625, 215.78125).click().perform()
-		actions.send_keys(number).perform()
-		time.sleep(2)
-		print('number ok')
-
-		actions.move_by_offset(228.25, 197.28125).click().perform()
-		actions.send_keys(month).perform()
-		print('month ok')
-		time.sleep(2)
-
-
-		actions.move_by_offset(296.09375, 197.28125).click().perform()
-		actions.send_keys(year).perform()
-		time.sleep(2)
-		print('year ok')
-
-		actions.move_by_offset(394.796875, 197.28125).click().perform()
-		actions.send_keys('000').perform()
-		time.sleep(2)
-		print('000 ok')
-		# Send keys directly to the input field
-		# actions = ActionChains(driver)
+		print('start add')
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-number')))
+		element_cc_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-number')
+		browser.browser.switch_to.frame(element_cc_iframe)
 		
-		# browser.add_input_js(By.ID,'cc_number',number)
-		# browser.add_input_js(By.ID,'expiration-month',month)
-		# browser.add_input_js(By.ID,'expiration-year',year)
-		# browser.add_input_js(By.ID,'cc_cvv','000')
+		browser.add_input(By.ID,'credit-card-number',number)
+		print('Add cc number OK')
+		time.sleep(5)
+
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-expirationMonth')))
+		element_month_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-expirationMonth')
+		browser.browser.switch_to.frame(element_month_iframe)
+		browser.add_input(By.ID,'expiration-month',month)
+		print('Add month  OK')
+		time.sleep(5)
+
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-expirationYear')))
+		element_year_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-expirationYear')
+		browser.browser.switch_to.frame(element_year_iframe)
+		browser.add_input(By.ID,'expiration-year',year)
+		print('Add year  OK')
+		time.sleep(5)
+		
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'cc_cvv')))
+		element_cvv_parent_iframe = browser.browser.find_element(By.ID, 'cc_cvv')
+		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-cvv')))
+		element_cvv_iframe = element_cvv_parent_iframe.find_element(By.ID, 'braintree-hosted-field-cvv')
+		browser.browser.switch_to.frame(element_cvv_iframe)
+
+		print(element_cvv_iframe)
+		
+		# Scroll the element into view using JavaScript
+		
+		browser.add_input_1(By.NAME,'cvv','000')
+		print('Add ccv  OK')
+		time.sleep(5)
+
+		print('start click save')
+		browser.browser.switch_to.default_content()
+		browser.browser.switch_to.frame(element)
 		browser.excute_js2('$("#btnSaveCreditCard").click();')
+		browser.browser.switch_to.default_content()
 		
 def action_place_my_order(browser):
-	time.sleep(3)
+	browser.browser.switch_to.default_content()
+	
+	# try:
+	# 	browser.excute_js1('$("#PlaceOrderFormTop > button").click();')
+	# except:
+	# 	browser.excute_js1('$("#PlaceOrderForm > button > button").click();')
+	print('start action_place_my_order')
+	time.sleep(10)
 	try:
-		browser.excute_js1('$("#PlaceOrderFormTop > button").click();')
-	except:
-		browser.excute_js1('$("#PlaceOrderForm > button > button").click();')
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.ID, 'btnPlaceOrder')))
+		element_order_parent_iframe = browser.browser.find_element(By.ID, 'btnPlaceOrder')
+		html = element_order_parent_iframe.get_attribute('outerHTML')
+
+		# Print the HTML
+		print(html)
+		wait = WebDriverWait(browser.browser, 10)
+		wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
+		button_order = element_order_parent_iframe.find_element(By.TAG_NAME,"button")
+		html_button_order = button_order.get_attribute('outerHTML')
+
+		# Print the HTML
+		print(html_button_order)
+		check_disabled = button_order.get_attribute("disabled")
+		print(check_disabled)
+		if check_disabled:
+			wait = WebDriverWait(browser.browser, 10)
+			wait.until(EC.presence_of_element_located((By.ID, 'btnPlaceOrderTop')))
+			element_order_parent_iframe = browser.browser.find_element(By.ID, 'btnPlaceOrderTop')
+			html = element_order_parent_iframe.get_attribute('outerHTML')
+
+			# Print the HTML
+			print(html)
+			wait = WebDriverWait(browser.browser, 10)
+			wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
+			button_order = element_order_parent_iframe.find_element(By.TAG_NAME,"button")
+			html_button_order = button_order.get_attribute('outerHTML')
+
+			# Print the HTML
+			print(html_button_order)
+		else:
+			button_order.click()
+	except :
+		print('not click order')
 	time.sleep(3)
 def save_result(line):
 	with open(current_folder+'/result.txt', 'a') as f:
@@ -307,7 +456,7 @@ def run():
 			number, month, year = line.strip().split('|')
 			list_creadit.append([number, month, year])
 
-	browser = Browser('drivers/chromedriver')
+	browser = Browser(current_folder+'drivers/chromedriver')
 	# Register Account
 	# action_register(browser)
 	browser.open_page('https://www.shophq.com/Account/Login')
@@ -378,15 +527,31 @@ def run():
 		month = list_creadit[i][1]
 		year = list_creadit[i][2]
 		time.sleep(3)
-		action_add_creadit(browser,number,month,year)
+		while True:
+			try:
+				action_add_creadit(browser,number,month,year)
+				break
+			except:
+				print('refresh')
+				browser.browser.refresh()
+				
 			
+		while True:
+				if browser.page_loading() :
+					time.sleep(4)
+				else:
+					break
 		try:
 			action_place_my_order(browser)
 		except:
 			print('Not make order')
-
-		time.sleep(3)
+		while True:
+				if browser.page_loading() :
+					time.sleep(4)
+				else:
+					break
 		try:
+			
 			browser.browser.find_element(By.ID,'checkout-error')
 			print('Khong thanh toan duoc')
 			line= f'{number}|{month}|{year}|fail'
@@ -395,5 +560,6 @@ def run():
 			print('thanh toan duwoc')
 			line= f'{number}|{month}|{year}|pass'
 			save_result(line)
+		browser.browser.refresh()
 	browser.close_browser()
 	

@@ -9,6 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 import random
 import string
 import re
+from selenium.webdriver.common.action_chains import ActionChains
 class Browser:
 	browser, service = None, None
 
@@ -20,6 +21,10 @@ class Browser:
 		# self.options.add_argument("--disable-extensions")
 		# self.options.add_argument("--disable-gpu")
 		# self.options.add_argument("--headless")
+		# self.options.add_argument("start-maximized")
+		self.options.add_argument("disable-infobars")
+		self.options.add_argument("--disable-extensions")
+
 		self.browser = webdriver.Chrome(service=self.service,options= self.options)
 
 	def open_page(self, url: str):
@@ -54,8 +59,60 @@ class Browser:
 		wait = WebDriverWait(self.browser, 10)
 		wait.until(EC.presence_of_element_located((by, value)))
 		field = self.browser.find_element(by=by, value=value)
+		print(field)
+		html = field.get_attribute('outerHTML')
+		print(html)
 		field.clear()
 		field.send_keys(text)
+		time.sleep(1)
+	def add_input_1(self, by: By, value: str, text: str):
+		wait = WebDriverWait(self.browser, 30)
+		wait.until(EC.presence_of_element_located((by, value)))
+		field = self.browser.find_element(by=by, value=value)
+		html = field.get_attribute('outerHTML')
+
+# Print the HTML
+		print(html)
+		print(field)
+		# self.browser.execute_script("document.getElementById('cvv').click()")
+		# self.browser.execute_script("document.getElementById('cvv').value='000'")
+		
+		# field.clear()
+		# field.click()
+		self.browser.execute_script("arguments[0].removeAttribute('disabled')", field)
+		field.send_keys('000')
+		# Scroll the element into view
+		# self.browser.execute_script("arguments[0].scrollIntoView();", field)
+
+		# Wait for the element to be visible and clickable
+		# WebDriverWait(field, 10).until(EC.element_to_be_clickable((By.ID, 'cvv')))
+		
+		# Perform the action on the element
+		# actions = ActionChains(self.browser)
+		# actions.move_to_element(field).click().send_keys('000').perform()
+		# Set the value of the element using JavaScript
+		# actions = ActionChains(self.browser)
+		# actions.move_to_element(field)
+
+		# # Click on the input element to activate it
+		# actions.click()
+
+		# # Send keys to the input element
+		# actions.send_keys('hello world')
+
+		# # Perform the actions
+		# actions.perform()
+		# field.send_keys(text)
+		time.sleep(1)
+	def add_input_2(self, by: By, value: str, text: str):
+		wait = WebDriverWait(self.browser, 30)
+		wait.until(EC.presence_of_element_located((by, value)))
+		field = self.browser.find_element(by=by, value=value)
+		print(field)
+
+		# Set the value of the element using JavaScript
+		self.browser.execute_script("arguments[0].value = arguments[1];", field, text)
+		# field.send_keys(text)
 		time.sleep(1)
 	def send_keys_js(self, by, value, text):
 		cmd = f"""$('[{by}="{value}"]').val("{text}").trigger('change');"""
@@ -109,10 +166,10 @@ class Browser:
 			page_loading = self.page_loading()
 			if page_loading==False :
 				self.check_page_qc()
-				self.remove_input(by=By.ID, value='RegisterEmailId')
-				self.add_input(by=By.ID, value='RegisterEmailId', text=email)
-				time.sleep(3)
-				self.check_page_qc()
+				# self.remove_input(by=By.ID, value='RegisterEmailId')
+				# self.add_input(by=By.ID, value='RegisterEmailId', text=email)
+				# time.sleep(3)
+				# self.check_page_qc()
 				print('start click submid-proceed')
 				# self.click_button(by=By.ID, value='submit-proceed')
 				self.excute_js('document.getElementById("submit-proceed").click()')
@@ -210,8 +267,7 @@ class Browser:
 			else:
 				break
 		print('Run CMD',cmd)
-		# with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
-		# 	jquery = jquery_js.read() 
-		# 	self.browser.execute_script(jquery)
-		
+		with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
+			jquery = jquery_js.read() 
+			self.browser.execute_script(jquery)
 		return self.browser.execute_script(cmd)		

@@ -254,12 +254,12 @@ class Browser:
 				time.sleep(3)
 			else:
 				break
-		self.browser.switch_to.default_content()
+		# self.browser.switch_to.default_content()
 		print('Run CMD',cmd)
-		with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
-			jquery = jquery_js.read() 
-			self.browser.execute_script(jquery)
-			return self.browser.execute_script(cmd)
+		# with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
+		# 	jquery = jquery_js.read() 
+		# 	self.browser.execute_script(jquery)
+		return self.browser.execute_script(cmd)
 	def excute_js2(self,cmd:str):
 		while True:
 			if self.page_loading() :
@@ -267,7 +267,7 @@ class Browser:
 			else:
 				break
 		print('Run CMD',cmd)
-		with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
-			jquery = jquery_js.read() 
-			self.browser.execute_script(jquery)
+		# with open('./jquery-3.3.1.min.js', 'r') as jquery_js: 
+		# 	jquery = jquery_js.read() 
+		# 	self.browser.execute_script(jquery)
 		return self.browser.execute_script(cmd)		

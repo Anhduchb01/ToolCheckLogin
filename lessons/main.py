@@ -57,8 +57,8 @@ def action_register(browser):
 			register =False
 			print('ok continue')
 
-def action_make_order(browser,urls):
-	browser.browser.get(urls[0])
+def action_make_order(browser,url):
+	browser.browser.get(url)
 	try:
 		browser.chooseTypeProduct(by=By.CSS_SELECTOR, value='li.color-box-container:first-of-type')
 	except:
@@ -183,12 +183,12 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			while i<10:
 				i+=1
 				
-				exists = browser.excute_js2('return $("#cphBody_optNewCard").length > 0;')
+				exists = browser.excute_js1('return $("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").length > 0;')
 				print(exists)
 				time.sleep(10)
 				if exists:
 					print('da click')
-					browser.excute_js2('$("#cphBody_optNewCard").click();')
+					browser.excute_js1('$("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").click();')
 					reFresh = False
 					loop = False
 					time.sleep(30)
@@ -238,12 +238,6 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-cvv')))
 		element_cvv_iframe = element_cvv_parent_iframe.find_element(By.ID, 'braintree-hosted-field-cvv')
 		browser.browser.switch_to.frame(element_cvv_iframe)
-
-		print(element_cvv_iframe)
-		iframe_html = browser.browser.execute_script("return document.body.innerHTML;")
-		print(iframe_html)
-		# Scroll the element into view using JavaScript
-		
 		browser.add_input_1(By.NAME,'cvv','000')
 		print('Add ccv  OK')
 		time.sleep(5)
@@ -288,21 +282,21 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 			i=0
 			while i<10:
 				i+=1
-				exists_card = browser.excute_js2('return $("#cphBody_optNewCard").length > 0;')
+				exists_card = browser.excute_js1('return $("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").length > 0;')
 				if exists_card:
-					exists = browser.excute_js2('return $("#cphBody_optNewCard").length > 0;')
+					exists = browser.excute_js1('return $("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").length > 0;')
 					print(exists)
 					time.sleep(10)
 					if exists:
 						print('da click')
-						browser.excute_js2('$("#cphBody_optNewCard").click();')
+						browser.excute_js1('$("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").click();')
 						reFresh = False
 						loop = False
 						time.sleep(30)
 						break
 				
 				else:
-					exists = browser.excute_js2('return $("#cphBody_optCreditCards").length > 0;')
+					exists = browser.excute_js1('return $("#cphBody_optCreditCards").length > 0;')
 					print(exists)
 					time.sleep(10)
 					if exists:
@@ -421,6 +415,57 @@ def action_place_my_order(browser):
 def save_result(line):
 	with open(current_folder+'/result.txt', 'a') as f:
 		f.write('\n'+ line)
+def getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone):
+	page_loading= True
+	while page_loading:
+		page_loading = browser.page_loading()
+		if page_loading==False :
+			try:
+				action_make_order(browser,urls[0])
+			except:
+				action_make_order(browser,urls[1])
+		time.sleep(3)
+
+	quick_buy_check = True
+	while quick_buy_check:
+		if 'shophq.com/Checkout/QuickBuy' not in browser.browser.current_url:
+			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+			time.sleep(2)
+		else:
+			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+			quick_buy_check =False
+			print('ok continue')
+	page_loading= True
+	while page_loading:
+		page_loading = browser.page_loading()
+
+		if page_loading==False :
+			curentUrl = browser.browser.current_url
+			if 'shophq.com/Checkout/QuickBuy' in curentUrl:
+				# try:
+				print(check_box_exist_info)
+				if check_box_exist_info == "0" or check_box_exist_info ==0:
+					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+					action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
+					time.sleep(3)
+					# except :
+						
+					# 	print('Da co thong tin ship address')
+					# try:
+					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+					action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
+					time.sleep(3)
+				# except:
+				# 	print('Da co thong tin bill address')
+			elif 'https://www.shophq.com/Account/Login' in curentUrl:
+				try:
+					action_login(browser,email,password)
+				except:
+					print('Not')
+			else:
+				time.sleep(6)
+				print('Not make order')
+		time.sleep(3)
 def run():
 	urls = []
 
@@ -477,54 +522,8 @@ def run():
 	
 	# go to product and Buy
 	print(browser.browser.current_url)
-
-	page_loading= True
-	while page_loading:
-		page_loading = browser.page_loading()
-		if page_loading==False :
-			action_make_order(browser,urls)
-		time.sleep(3)
-
-	quick_buy_check = True
-	while quick_buy_check:
-		if 'shophq.com/Checkout/QuickBuy' not in browser.browser.current_url:
-			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-			time.sleep(2)
-		else:
-			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-			quick_buy_check =False
-			print('ok continue')
-	page_loading= True
-	while page_loading:
-		page_loading = browser.page_loading()
-
-		if page_loading==False :
-			curentUrl = browser.browser.current_url
-			if 'shophq.com/Checkout/QuickBuy' in curentUrl:
-				# try:
-				print(check_box_exist_info)
-				if check_box_exist_info == "0" or check_box_exist_info ==0:
-					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-					action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
-					time.sleep(3)
-					# except :
-						
-					# 	print('Da co thong tin ship address')
-					# try:
-					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-					action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
-					time.sleep(3)
-				# except:
-				# 	print('Da co thong tin bill address')
-			elif 'https://www.shophq.com/Account/Login' in curentUrl:
-				try:
-					action_login(browser,email,password)
-				except:
-					print('Not')
-			else:
-				time.sleep(6)
-				print('Not make order')
-		time.sleep(3)
+	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+	
 	for i in range(len(list_creadit)):
 		# try:
 		number = list_creadit[i][0]
@@ -573,6 +572,8 @@ def run():
 			print('thanh toan duwoc')
 			line= f'{number}|{month}|{year}|pass'
 			save_result(line)
+			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+
 		print('Current iframe',browser.browser.current_url)
 		browser.browser.switch_to.default_content()
 		wait = WebDriverWait(browser.browser, 30)

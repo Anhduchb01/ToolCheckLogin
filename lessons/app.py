@@ -151,16 +151,30 @@ class App(customtkinter.CTk):
         self.url_product_frame.grid_rowconfigure(3, weight=6)
         self.label_url_product = customtkinter.CTkLabel(master=self.url_product_frame, text="URL Product")
         self.label_url_product.grid(row=0, column=0,padx=(0, 0), pady=(0, 0), sticky="WE" )
-        self.textbox_product = customtkinter.CTkTextbox(self.url_product_frame,height=50)
+        self.textbox_product = customtkinter.CTkTextbox(self.url_product_frame,height=100)
         self.textbox_product.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
         self.string_input_button = customtkinter.CTkButton(self.url_product_frame, text="Save URL",
                                                            command=self.save_url_product)
-        self.string_input_button.grid(row=3, column=0,pady=(5,10))
+        self.string_input_button.grid(row=2, column=0,pady=(5,10))
 
-        self.label_url_product = customtkinter.CTkLabel(master=self.url_product_frame, text="Kết quả")
-        self.label_url_product.grid(row=4, column=0,padx=(0, 0), pady=(10, 0) , sticky="WE" )
-        self.textbox_result = customtkinter.CTkTextbox(self.url_product_frame,height=150)
-        self.textbox_result.grid(row=5, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
+        
+        self.url_proxy_frame = customtkinter.CTkFrame(self.url_product_frame)
+        self.url_proxy_frame.grid(row=3, column=0, sticky="nsew")
+
+        self.radio_button_proxy = customtkinter.CTkCheckBox(master=self.url_proxy_frame, variable=self.radio_var_proxy,text="Sử dụng Proxy")
+        self.radio_button_proxy.grid(row=1, column=0, pady=10, padx=20, sticky="nsew")
+        # self.textbox_result = customtkinter.CTkTextbox(self.url_proxy_frame)
+        # self.textbox_result.grid(row=2, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
+
+        self.label_proxy = customtkinter.CTkLabel(master=self.url_proxy_frame, text="Proxy :")
+        self.label_proxy.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
+        
+        self.entry_proxy = customtkinter.CTkEntry(self.url_proxy_frame, placeholder_text="http://149.215.113.110:70",textvariable=self.proxy)
+        self.entry_proxy.grid(row=2, column=1, padx=10, pady=10)
+
+        self.save_proxy_button = customtkinter.CTkButton(self.url_proxy_frame, text="Save Proxy",
+                                                           command=self.save_proxy)
+        self.save_proxy_button.grid(row=3, column=1,columnspan = 2,pady=(10,10))
 
         # #setup 
         # if self.box_exist_info ==1 or self.box_exist_info =="1":
@@ -168,7 +182,7 @@ class App(customtkinter.CTk):
         # else:
         #     self.check_box_exist_info.deselect()
         self.entry_email.bind(command=self.change_account)
-        self.textbox_result.configure(state="disabled")
+        # self.textbox_result.configure(state="disabled")
         self.textbox_product.insert("0.0",self.string_url_product)
 
         self.appearance_mode_optionemenu.set("Dark")
@@ -197,7 +211,14 @@ class App(customtkinter.CTk):
             self.email, self.password = line.strip().split('|')
             self.email = customtkinter.StringVar(value=self.email.replace(' ',''))
             self.password= customtkinter.StringVar(value=self.password.replace(' ',''))
-        print(self.email,self.password)
+
+        proxy =  open(current_folder+'/proxy.txt', 'r')
+        for line in proxy:
+            self.radio_button_proxy, self.proxy = line.strip().split('|')
+            self.radio_var_proxy = tkinter.IntVar(value=self.radio_button_proxy)
+            self.proxy = customtkinter.StringVar(value=self.proxy)
+
+        print(self.radio_button_proxy,self.proxy)
         form_ship_address = []
         ship_address =  open(current_folder+'/ship_address.txt', 'r')
         for line in ship_address:
@@ -234,6 +255,10 @@ class App(customtkinter.CTk):
         with open(current_folder+'/url_product.txt', 'w') as f :
             url_product = self.textbox_product.get('0.0','end-1c')
             f.write(url_product)
+    def save_proxy(self):
+         with open(current_folder+'/proxy.txt', 'w') as f :
+            proxy = str(self.radio_button_proxy.get())+'|'+str(self.proxy.get())
+            f.write(proxy)
     def change_account(self):
         print('Change ok')
     def open_input_dialog_event(self):

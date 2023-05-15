@@ -14,10 +14,13 @@ class Browser:
 	browser, service = None, None
 
 	# Initialise the webdriver with the path to chromedriver.exe
-	def __init__(self, driver: str):
+	def __init__(self, driver: str,check_proxy: str,proxy: str):
 		self.service = Service(driver)
 		self.options = webdriver.ChromeOptions()
 		self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
+		if check_proxy =='1':
+			print('Add proxy')
+			self.options.add_argument('--proxy-server=%s' % proxy)
 		# self.options.add_argument("--disable-extensions")
 		# self.options.add_argument("--disable-gpu")
 		# self.options.add_argument("--headless")

@@ -160,7 +160,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 					break
 			print('load ok')
 			click_edit = browser.excute_js1('$("#payment-collapse-button-title").click()')
-			time.sleep(10)
+			time.sleep(5)
 			try:
 				wait = WebDriverWait(browser.browser, 30)
 				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
@@ -185,13 +185,13 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 				
 				exists = browser.excute_js1('return $("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").length > 0;')
 				print(exists)
-				time.sleep(10)
+				time.sleep(3)
 				if exists:
 					print('da click')
 					browser.excute_js1('$("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").click();')
 					reFresh = False
 					loop = False
-					time.sleep(30)
+					time.sleep(3)
 					break
 			if reFresh:
 				print('refresh')
@@ -205,10 +205,10 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-number')))
 		element_cc_iframe = browser.browser.find_element(By.ID, 'braintree-hosted-field-number')
 		browser.browser.switch_to.frame(element_cc_iframe)
-		time.sleep(30)
+		time.sleep(3)
 		browser.add_input(By.ID,'credit-card-number',number)
 		print('Add cc number OK')
-		time.sleep(5)
+		time.sleep(3)
 
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
@@ -218,7 +218,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.browser.switch_to.frame(element_month_iframe)
 		browser.add_input(By.ID,'expiration-month',month)
 		print('Add month  OK')
-		time.sleep(5)
+		time.sleep(3)
 
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
@@ -228,7 +228,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.browser.switch_to.frame(element_year_iframe)
 		browser.add_input(By.ID,'expiration-year',year)
 		print('Add year  OK')
-		time.sleep(5)
+		time.sleep(3)
 		
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
@@ -240,7 +240,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.browser.switch_to.frame(element_cvv_iframe)
 		browser.add_input_1(By.NAME,'cvv','000')
 		print('Add ccv  OK')
-		time.sleep(5)
+		time.sleep(3)
 
 		print('start click save')
 		browser.browser.switch_to.default_content()
@@ -260,7 +260,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 				else:
 					break
 			print('load ok')
-			time.sleep(10)
+			time.sleep(2)
 			try:
 				wait = WebDriverWait(browser.browser, 30)
 				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
@@ -286,19 +286,19 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 				if exists_card:
 					exists = browser.excute_js1('return $("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").length > 0;')
 					print(exists)
-					time.sleep(10)
+					time.sleep(5)
 					if exists:
 						print('da click')
 						browser.excute_js1('$("#tblCCForm > tbody > tr:nth-child(8) > td > span > label").click();')
 						reFresh = False
 						loop = False
-						time.sleep(30)
+						time.sleep(5)
 						break
 				
 				else:
 					exists = browser.excute_js1('return $("#cphBody_optCreditCards").length > 0;')
 					print(exists)
-					time.sleep(10)
+					time.sleep(5)
 					if exists:
 						print('da click')
 						browser.excute_js2('$("#cphBody_optCreditCards").click();')
@@ -310,7 +310,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 				browser.browser.refresh()
 
 		print('ok')
-		time.sleep(2)
+		time.sleep(3)
 		print('start add')
 		wait = WebDriverWait(browser.browser, 10)
 		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-number')))
@@ -319,7 +319,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		
 		browser.add_input(By.ID,'credit-card-number',number)
 		print('Add cc number OK')
-		time.sleep(5)
+		time.sleep(3)
 
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
@@ -329,7 +329,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.browser.switch_to.frame(element_month_iframe)
 		browser.add_input(By.ID,'expiration-month',month)
 		print('Add month  OK')
-		time.sleep(5)
+		time.sleep(3)
 
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
@@ -339,7 +339,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.browser.switch_to.frame(element_year_iframe)
 		browser.add_input(By.ID,'expiration-year',year)
 		print('Add year  OK')
-		time.sleep(5)
+		time.sleep(3)
 		
 		browser.browser.switch_to.default_content()
 		browser.browser.switch_to.frame(element)
@@ -356,7 +356,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		
 		browser.add_input_1(By.NAME,'cvv','000')
 		print('Add ccv  OK')
-		time.sleep(5)
+		time.sleep(3)
 
 		print('start click save')
 		browser.browser.switch_to.default_content()
@@ -365,6 +365,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		browser.excute_js2('$("#btnSaveCreditCard").click();')
 		browser.browser.switch_to.default_content()
 		print('Current iframe',browser.browser.current_url)
+		time.sleep(10)
 		
 def action_place_my_order(browser):
 	browser.browser.switch_to.default_content()
@@ -374,16 +375,16 @@ def action_place_my_order(browser):
 	# except:
 	# 	browser.excute_js1('$("#PlaceOrderForm > button > button").click();')
 	print('start action_place_my_order')
-	time.sleep(10)
+	time.sleep(3)
 	try:
-		wait = WebDriverWait(browser.browser, 10)
+		wait = WebDriverWait(browser.browser, 15)
 		wait.until(EC.presence_of_element_located((By.ID, 'btnPlaceOrder')))
 		element_order_parent_iframe = browser.browser.find_element(By.ID, 'btnPlaceOrder')
 		html = element_order_parent_iframe.get_attribute('outerHTML')
 
 		# Print the HTML
 		print(html)
-		wait = WebDriverWait(browser.browser, 10)
+		wait = WebDriverWait(browser.browser, 15)
 		wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
 		button_order = element_order_parent_iframe.find_element(By.TAG_NAME,"button")
 		html_button_order = button_order.get_attribute('outerHTML')
@@ -393,14 +394,14 @@ def action_place_my_order(browser):
 		check_disabled = button_order.get_attribute("disabled")
 		print(check_disabled)
 		if check_disabled:
-			wait = WebDriverWait(browser.browser, 10)
+			wait = WebDriverWait(browser.browser, 15)
 			wait.until(EC.presence_of_element_located((By.ID, 'btnPlaceOrderTop')))
 			element_order_parent_iframe = browser.browser.find_element(By.ID, 'btnPlaceOrderTop')
 			html = element_order_parent_iframe.get_attribute('outerHTML')
 
 			# Print the HTML
 			print(html)
-			wait = WebDriverWait(browser.browser, 10)
+			wait = WebDriverWait(browser.browser, 15)
 			wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
 			button_order = element_order_parent_iframe.find_element(By.TAG_NAME,"button")
 			html_button_order = button_order.get_attribute('outerHTML')
@@ -412,8 +413,11 @@ def action_place_my_order(browser):
 	except :
 		print('not click order')
 	time.sleep(3)
-def save_result(line):
-	with open(current_folder+'/result.txt', 'a') as f:
+def save_result_pass(line):
+	with open(current_folder+'/result_pass.txt', 'a') as f:
+		f.write('\n'+ line)
+def save_result_fail(line):
+	with open(current_folder+'/result_fail.txt', 'a') as f:
 		f.write('\n'+ line)
 def getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone):
 	page_loading= True
@@ -504,8 +508,13 @@ def run():
 		for line in f:
 			number, month, year = line.strip().split('|')
 			list_creadit.append([number, month, year])
+	with open(current_folder+'/proxy.txt', 'r') as f:
+		for line in f:
+			check_proxy, proxy = line.strip().split('|')
+			check_proxy = check_proxy.replace(' ','')
+			proxy= proxy.replace(' ','')
 
-	browser = Browser(current_folder+'drivers/chromedriver')
+	browser = Browser(current_folder+'/drivers/chromedriver.exe',check_proxy=check_proxy,proxy=proxy)
 	# Register Account
 	# action_register(browser)
 	browser.open_page('https://www.shophq.com/Account/Login')
@@ -526,6 +535,14 @@ def run():
 	
 	for i in range(len(list_creadit)):
 		# try:
+		if i!=0 and i % 100==0:
+			while True:
+				if browser.page_loading() :
+					time.sleep(4)
+				else:
+					break
+			action_register(browser)
+			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
 		number = list_creadit[i][0]
 		month = list_creadit[i][1]
 		year = list_creadit[i][2]
@@ -553,6 +570,7 @@ def run():
 					time.sleep(4)
 				else:
 					break
+		time.sleep(15)
 		try:
 			action_place_my_order(browser)
 		except:
@@ -561,19 +579,22 @@ def run():
 				if browser.page_loading() :
 					time.sleep(4)
 				else:
+					time.sleep(10)
 					break
+		
+		# if 'shophq.com/Checkout/PlaceOrder' in browser.browser.current_url or 'www.shophq.com/Checkout/QuickBuy' in browser.browser.current_url:
 		try:
-			
+			wait = WebDriverWait(browser.browser, 30)
+			wait.until(EC.presence_of_element_located((By.ID, 'checkout-error')))
 			browser.browser.find_element(By.ID,'checkout-error')
 			print('Khong thanh toan duoc')
 			line= f'{number}|{month}|{year}|fail'
-			save_result(line)
-		except NoSuchElementException :
-			print('thanh toan duwoc')
+			save_result_fail(line)
+		except  :
+			print('thanh toan duoc không hiện lỗi')
 			line= f'{number}|{month}|{year}|pass'
-			save_result(line)
+			save_result_pass(line)
 			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
-
 		print('Current iframe',browser.browser.current_url)
 		browser.browser.switch_to.default_content()
 		wait = WebDriverWait(browser.browser, 30)
@@ -582,6 +603,10 @@ def run():
 
 		browser.browser.switch_to.frame(element)
 		browser.browser.refresh()
-		# browser.browser.get(browser.browser.current_url)
+		# else:
+		# 	print('thanh toan duoc sang url mới')
+		# 	line= f'{number}|{month}|{year}|pass'
+		# 	save_result_pass(line)
+		# 	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
 	browser.close_browser()
 	

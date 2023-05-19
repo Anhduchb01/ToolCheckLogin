@@ -163,6 +163,8 @@ class App(customtkinter.CTk):
 
         self.radio_button_proxy = customtkinter.CTkCheckBox(master=self.url_proxy_frame, variable=self.radio_var_proxy,text="Sử dụng Proxy")
         self.radio_button_proxy.grid(row=1, column=0, pady=10, padx=20, sticky="nsew")
+        # self.radio_button_proxy_user = customtkinter.CTkCheckBox(master=self.url_proxy_frame, variable=self.radio_var_proxy_user,text="Proxy có User")
+        # self.radio_button_proxy_user.grid(row=1, column=1, pady=10, padx=20, sticky="nsew")
         # self.textbox_result = customtkinter.CTkTextbox(self.url_proxy_frame)
         # self.textbox_result.grid(row=2, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
 
@@ -214,11 +216,11 @@ class App(customtkinter.CTk):
 
         proxy =  open(current_folder+'/proxy.txt', 'r')
         for line in proxy:
-            self.radio_button_proxy, self.proxy = line.strip().split('|')
-            self.radio_var_proxy = tkinter.IntVar(value=self.radio_button_proxy)
-            self.proxy = customtkinter.StringVar(value=self.proxy)
+            radio_button_proxy,radio_button_proxy_user, proxy = line.strip().split('|')
+            self.radio_var_proxy = tkinter.IntVar(value=radio_button_proxy)
+            self.radio_var_proxy_user = tkinter.IntVar(value=radio_button_proxy_user)
+            self.proxy = customtkinter.StringVar(value=proxy)
 
-        print(self.radio_button_proxy,self.proxy)
         form_ship_address = []
         ship_address =  open(current_folder+'/ship_address.txt', 'r')
         for line in ship_address:
@@ -257,7 +259,7 @@ class App(customtkinter.CTk):
             f.write(url_product)
     def save_proxy(self):
          with open(current_folder+'/proxy.txt', 'w') as f :
-            proxy = str(self.radio_button_proxy.get())+'|'+str(self.proxy.get())
+            proxy = str(self.radio_button_proxy.get()) +'|'+str(self.radio_button_proxy_user.get()) +'|'+str(self.proxy.get()) 
             f.write(proxy)
     def change_account(self):
         print('Change ok')

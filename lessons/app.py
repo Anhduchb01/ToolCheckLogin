@@ -216,9 +216,8 @@ class App(customtkinter.CTk):
 
         proxy =  open(current_folder+'/proxy.txt', 'r')
         for line in proxy:
-            radio_button_proxy,radio_button_proxy_user, proxy = line.strip().split('|')
+            radio_button_proxy, proxy = line.strip().split('|')
             self.radio_var_proxy = tkinter.IntVar(value=radio_button_proxy)
-            self.radio_var_proxy_user = tkinter.IntVar(value=radio_button_proxy_user)
             self.proxy = customtkinter.StringVar(value=proxy)
 
         form_ship_address = []
@@ -259,7 +258,7 @@ class App(customtkinter.CTk):
             f.write(url_product)
     def save_proxy(self):
          with open(current_folder+'/proxy.txt', 'w') as f :
-            proxy = str(self.radio_button_proxy.get()) +'|'+str(self.radio_button_proxy_user.get()) +'|'+str(self.proxy.get()) 
+            proxy = str(self.radio_button_proxy.get()) +'|'+str(self.proxy.get()) 
             f.write(proxy)
     def change_account(self):
         print('Change ok')

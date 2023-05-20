@@ -513,7 +513,7 @@ def run():
 			list_creadit.append([number, month, year])
 	with open(current_folder+'/proxy.txt', 'r') as f:
 		for line in f:
-			check_proxy,check_proxy_user, proxy = line.strip().split('|')
+			check_proxy, proxy = line.strip().split('|')
 			check_proxy = check_proxy.replace(' ','')
 			proxy= proxy.replace(' ','')
 

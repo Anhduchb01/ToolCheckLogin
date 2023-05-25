@@ -10,7 +10,7 @@ from generate import Generate
 from browser import Browser
 from selenium.webdriver.common.action_chains import ActionChains
 import os
-
+import datetime
 # Get the current folder
 current_folder = os.getcwd()
 def action_register(browser):
@@ -70,7 +70,7 @@ def action_make_order(browser,url):
 	
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
-	browser.click_button(by=By.ID,value="btn-quick-buy-pdp")
+	browser.excute_js1("$('#btn-quick-buy-pdp').click()")
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
 	time.sleep(2)
 	browser.turn_off_modal(by=By.CLASS_NAME,value='pdp-promo-modal')
@@ -474,155 +474,161 @@ def getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,l
 					print('Not make order')
 			time.sleep(3)
 def run():
-	urls = []
+	try:
+		urls = []
 
-	# Read each line of the file and append to the urls array
-	with open(current_folder+'/url_product.txt', 'r') as f:
-		for line in f:
-			url = line.strip()
-			urls.append(url)
-	print(urls)
-	# Load the first URL using the webdriver object
-	with open(current_folder+'/account.txt', 'r') as f:
-		for line in f:
-			email, password = line.strip().split('|')
-			email = email.replace(' ','')
-			password= password.replace(' ','')
-	print(email,password)
-	form_ship_address = []
-	with open(current_folder+'/ship_address.txt', 'r') as f:
-		for line in f:
-			# Split the line into separate fields
-			raw = line.strip()
-			form_ship_address.append(raw)
-			# Extract the individual fields
-	print(form_ship_address)
-	first_name = form_ship_address[0]
-	last_name = form_ship_address[1]
-	address = form_ship_address[2]
-	city = form_ship_address[3]
-	state = form_ship_address[4]
-	zip_code = form_ship_address[5]
-	phone = form_ship_address[6]
-	check_box_exist_info = form_ship_address[7]
-	list_creadit = []
-	
-	with open(current_folder+'/credit.txt', 'r') as f:
-		for line in f:
-			number, month, year = line.strip().split('|')
-			list_creadit.append([number, month, year])
-	with open(current_folder+'/proxy.txt', 'r') as f:
-		for line in f:
-			check_proxy, proxy = line.strip().split('|')
-			check_proxy = check_proxy.replace(' ','')
-			proxy= proxy.replace(' ','')
+		# Read each line of the file and append to the urls array
+		with open(current_folder+'/url_product.txt', 'r') as f:
+			for line in f:
+				url = line.strip()
+				urls.append(url)
+		print(urls)
+		# Load the first URL using the webdriver object
+		with open(current_folder+'/account.txt', 'r') as f:
+			for line in f:
+				email, password = line.strip().split('|')
+				email = email.replace(' ','')
+				password= password.replace(' ','')
+		print(email,password)
+		form_ship_address = []
+		with open(current_folder+'/ship_address.txt', 'r') as f:
+			for line in f:
+				# Split the line into separate fields
+				raw = line.strip()
+				form_ship_address.append(raw)
+				# Extract the individual fields
+		print(form_ship_address)
+		first_name = form_ship_address[0]
+		last_name = form_ship_address[1]
+		address = form_ship_address[2]
+		city = form_ship_address[3]
+		state = form_ship_address[4]
+		zip_code = form_ship_address[5]
+		phone = form_ship_address[6]
+		check_box_exist_info = form_ship_address[7]
+		list_creadit = []
+		
+		with open(current_folder+'/credit.txt', 'r') as f:
+			for line in f:
+				number, month, year = line.strip().split('|')
+				list_creadit.append([number, month, year])
+		with open(current_folder+'/proxy.txt', 'r') as f:
+			for line in f:
+				check_proxy, proxy = line.strip().split('|')
+				check_proxy = check_proxy.replace(' ','')
+				proxy= proxy.replace(' ','')
 
-	browser = Browser(current_folder+'/drivers/chromedriver.exe',check_proxy=check_proxy,proxy=proxy)
-	# Register Account
-	# action_register(browser)
-	browser.open_page('https://www.shophq.com/Account/Login')
-	action_login(browser,email,password)
-	time.sleep(2)
-	page_loading =True
-	while page_loading:
-		page_loading = browser.page_loading()
-		if page_loading==False :
-			curentUrl = browser.browser.current_url
-			if 'www.shophq.com/?SignInSuccess=true' not in curentUrl:
+		browser = Browser(current_folder+'/drivers/chromedriver.exe',check_proxy=check_proxy,proxy=proxy)
+		# Register Account
+		# action_register(browser)
+		browser.open_page('https://www.shophq.com/Account/Login')
+		action_login(browser,email,password)
+		time.sleep(2)
+		page_loading =True
+		while page_loading:
+			page_loading = browser.page_loading()
+			if page_loading==False :
+				curentUrl = browser.browser.current_url
+				if 'www.shophq.com/?SignInSuccess=true' not in curentUrl:
+					action_register(browser)
+		time.sleep(2)
+		
+		# go to product and Buy
+		print(browser.browser.current_url)
+		getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,True)
+		
+		for i in range(len(list_creadit)-1,-1,-1):
+			# try:
+			check_add_creadit = True
+			if i == len(list_creadit)-1:
+				check_add_creadit = False
+			if i!=len(list_creadit)-1 and i % 50==0:
+				while True:
+					if browser.page_loading() :
+						time.sleep(4)
+					else:
+						break
 				action_register(browser)
-	time.sleep(2)
-	
-	# go to product and Buy
-	print(browser.browser.current_url)
-	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,True)
-	
-	for i in range(len(list_creadit)-1,-1,-1):
-		# try:
-		check_add_creadit = True
-		if i == len(list_creadit)-1:
-			check_add_creadit = False
-		if i!=len(list_creadit)-1 and i % 50==0:
-			while True:
-				if browser.page_loading() :
-					time.sleep(4)
-				else:
-					break
-			action_register(browser)
-			check_add_creadit = False
-			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,check_add_creadit,True)
-			
-		number = list_creadit[i][0]
-		month = list_creadit[i][1]
-		year = list_creadit[i][2]
-		time.sleep(3)
-		
-		while True:
-			try:
-				action_add_creadit(browser,number,month,year)
-				break
-			except:
-				print('refresh')
-				browser.browser.switch_to.default_content()
-
-				print('Current iframe',browser.browser.current_url)
-				wait = WebDriverWait(browser.browser, 30)
-				wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
-				element = browser.browser.find_element(By.ID,'ifmCCForm')
-
-				browser.browser.switch_to.frame(element)
-				browser.browser.refresh()
-				# browser.browser.get(browser.browser.current_url)
+				check_add_creadit = False
+				getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,check_add_creadit,True)
 				
+			number = list_creadit[i][0]
+			month = list_creadit[i][1]
+			year = list_creadit[i][2]
+			time.sleep(3)
 			
-		while True:
-				if browser.page_loading() :
-					time.sleep(4)
-				else:
+			while True:
+				try:
+					action_add_creadit(browser,number,month,year)
 					break
-		time.sleep(15)
-		try:
-			action_place_my_order(browser)
-		except:
-			print('Not make order')
-		while True:
-				if browser.page_loading() :
-					time.sleep(4)
-				else:
-					time.sleep(10)
-					break
-		
-		# if 'shophq.com/Checkout/PlaceOrder' in browser.browser.current_url or 'www.shophq.com/Checkout/QuickBuy' in browser.browser.current_url:
-		try:
+				except:
+					print('refresh')
+					browser.browser.switch_to.default_content()
+
+					print('Current iframe',browser.browser.current_url)
+					wait = WebDriverWait(browser.browser, 30)
+					wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+					element = browser.browser.find_element(By.ID,'ifmCCForm')
+
+					browser.browser.switch_to.frame(element)
+					browser.browser.refresh()
+					# browser.browser.get(browser.browser.current_url)
+					
+				
+			while True:
+					if browser.page_loading() :
+						time.sleep(4)
+					else:
+						break
+			time.sleep(15)
+			try:
+				action_place_my_order(browser)
+			except:
+				print('Not make order')
+			while True:
+					if browser.page_loading() :
+						time.sleep(4)
+					else:
+						time.sleep(10)
+						break
+			
+			# if 'shophq.com/Checkout/PlaceOrder' in browser.browser.current_url or 'www.shophq.com/Checkout/QuickBuy' in browser.browser.current_url:
+			try:
+				wait = WebDriverWait(browser.browser, 30)
+				wait.until(EC.presence_of_element_located((By.ID, 'checkout-error')))
+				browser.browser.find_element(By.ID,'checkout-error')
+				print('Khong thanh toan duoc')
+				line= f'{number}|{month}|{year}|fail'
+				save_result_fail(line)
+			except  :
+				print('thanh toan duoc không hiện lỗi')
+				line= f'{number}|{month}|{year}|pass'
+				save_result_pass(line)
+				getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,False)
+			print('Current iframe',browser.browser.current_url)
+			browser.browser.switch_to.default_content()
 			wait = WebDriverWait(browser.browser, 30)
-			wait.until(EC.presence_of_element_located((By.ID, 'checkout-error')))
-			browser.browser.find_element(By.ID,'checkout-error')
-			print('Khong thanh toan duoc')
-			line= f'{number}|{month}|{year}|fail'
-			save_result_fail(line)
-		except  :
-			print('thanh toan duoc không hiện lỗi')
-			line= f'{number}|{month}|{year}|pass'
-			save_result_pass(line)
-			getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,False)
-		print('Current iframe',browser.browser.current_url)
-		browser.browser.switch_to.default_content()
-		wait = WebDriverWait(browser.browser, 30)
-		wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
-		element = browser.browser.find_element(By.ID,'ifmCCForm')
+			wait.until(EC.presence_of_element_located((By.ID, 'ifmCCForm')))
+			element = browser.browser.find_element(By.ID,'ifmCCForm')
 
-		browser.browser.switch_to.frame(element)
-		browser.browser.refresh()
-		# else:
-		# 	print('thanh toan duoc sang url mới')
-		# 	line= f'{number}|{month}|{year}|pass'
-		# 	save_result_pass(line)
-		# 	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
-		list_creadit.pop(-1)
-	
+			browser.browser.switch_to.frame(element)
+			browser.browser.refresh()
+			# else:
+			# 	print('thanh toan duoc sang url mới')
+			# 	line= f'{number}|{month}|{year}|pass'
+			# 	save_result_pass(line)
+			# 	getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone)
+			list_creadit.pop(-1)
+		
 
-		# Write the updated list back to the file
-		with open(current_folder + '/credit.txt', 'w') as f:
-			for item in list_creadit:
-				f.write('|'.join(item) + '\n')
-	browser.close_browser()
+			# Write the updated list back to the file
+			with open(current_folder + '/credit.txt', 'w') as f:
+				for item in list_creadit:
+					f.write('|'.join(item) + '\n')
+		browser.close_browser()
+	except Exception as e:
+		now = datetime.datetime.now()
+		error = e
+		with open(current_folder + '/log_error.txt', 'w') as f:
+			f.write('-----------'+now+'------------' +'\n'+str(error) + '\n'+'--------------------------------------------------')
 	

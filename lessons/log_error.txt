@@ -1,0 +1,82 @@
+-----------2023-05-29 17:16:09.286882------------
+Traceback (most recent call last):
+  File "C:\Users\HungPP2\Desktop\20222\ToolCheckLogin\lessons\main.py", line 577, in run
+    action_add_creadit(browser,number,month,year,cvv)
+  File "C:\Users\HungPP2\Desktop\20222\ToolCheckLogin\lessons\main.py", line 207, in action_add_creadit
+    wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-number')))
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\support\wait.py", line 86, in until
+    value = method(self._driver)
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\support\expected_conditions.py", line 69, in _predicate
+    return driver.find_element(*locator)
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 831, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=113.0.5672.127)
+Stacktrace:
+Backtrace:
+	GetHandleVerifier [0x01218893+48451]
+	(No symbol) [0x011AB8A1]
+	(No symbol) [0x010B5058]
+	(No symbol) [0x0109D073]
+	(No symbol) [0x010FDEBB]
+	(No symbol) [0x0110BFD3]
+	(No symbol) [0x010FA0B6]
+	(No symbol) [0x010D7E08]
+	(No symbol) [0x010D8F2D]
+	GetHandleVerifier [0x01478E3A+2540266]
+	GetHandleVerifier [0x014B8959+2801161]
+	GetHandleVerifier [0x014B295C+2776588]
+	GetHandleVerifier [0x012A2280+612144]
+	(No symbol) [0x011B4F6C]
+	(No symbol) [0x011B11D8]
+	(No symbol) [0x011B12BB]
+	(No symbol) [0x011A4857]
+	BaseThreadInitThunk [0x768500C9+25]
+	RtlGetAppContainerNamedObjectPath [0x770F7B4E+286]
+	RtlGetAppContainerNamedObjectPath [0x770F7B1E+238]
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\HungPP2\Desktop\20222\ToolCheckLogin\lessons\main.py", line 581, in run
+    browser.browser.switch_to.default_content()
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\remote\switch_to.py", line 66, in default_content
+    self._driver.execute(Command.SWITCH_TO_FRAME, {"id": None})
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "C:\Users\HungPP2\anaconda3\envs\tool\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=113.0.5672.127)
+Stacktrace:
+Backtrace:
+	GetHandleVerifier [0x01218893+48451]
+	(No symbol) [0x011AB8A1]
+	(No symbol) [0x010B5058]
+	(No symbol) [0x0109D073]
+	(No symbol) [0x010FDEBB]
+	(No symbol) [0x0110BFD3]
+	(No symbol) [0x010FA0B6]
+	(No symbol) [0x010D7E08]
+	(No symbol) [0x010D8F2D]
+	GetHandleVerifier [0x01478E3A+2540266]
+	GetHandleVerifier [0x014B8959+2801161]
+	GetHandleVerifier [0x014B295C+2776588]
+	GetHandleVerifier [0x012A2280+612144]
+	(No symbol) [0x011B4F6C]
+	(No symbol) [0x011B11D8]
+	(No symbol) [0x011B12BB]
+	(No symbol) [0x011A4857]
+	BaseThreadInitThunk [0x768500C9+25]
+	RtlGetAppContainerNamedObjectPath [0x770F7B4E+286]
+	RtlGetAppContainerNamedObjectPath [0x770F7B1E+238]
+
+
+--------------------------------------------------

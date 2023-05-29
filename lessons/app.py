@@ -163,8 +163,8 @@ class App(customtkinter.CTk):
 
         self.radio_button_proxy = customtkinter.CTkCheckBox(master=self.url_proxy_frame, variable=self.radio_var_proxy,text="Sử dụng Proxy")
         self.radio_button_proxy.grid(row=1, column=0, pady=10, padx=20, sticky="nsew")
-        # self.radio_button_proxy_user = customtkinter.CTkCheckBox(master=self.url_proxy_frame, variable=self.radio_var_proxy_user,text="Proxy có User")
-        # self.radio_button_proxy_user.grid(row=1, column=1, pady=10, padx=20, sticky="nsew")
+        self.radio_button_use_cvv000 = customtkinter.CTkCheckBox(master=self.url_proxy_frame, variable=self.radio_var_usecvv,text="Dùng cvv 000")
+        self.radio_button_use_cvv000.grid(row=1, column=1, pady=10, padx=20, sticky="nsew")
         # self.textbox_result = customtkinter.CTkTextbox(self.url_proxy_frame)
         # self.textbox_result.grid(row=2, column=0, padx=(10, 10), pady=(0, 10), sticky="WE")
 
@@ -216,10 +216,10 @@ class App(customtkinter.CTk):
 
         proxy =  open(current_folder+'/proxy.txt', 'r')
         for line in proxy:
-            radio_button_proxy, proxy = line.strip().split('|')
+            radio_button_proxy, proxy ,use_cvv  = line.strip().split('|')
             self.radio_var_proxy = tkinter.IntVar(value=radio_button_proxy)
             self.proxy = customtkinter.StringVar(value=proxy)
-
+            self.radio_var_usecvv = customtkinter.IntVar(value=use_cvv)
         form_ship_address = []
         ship_address =  open(current_folder+'/ship_address.txt', 'r')
         for line in ship_address:
@@ -236,12 +236,19 @@ class App(customtkinter.CTk):
         self.state_city = customtkinter.StringVar(value=form_ship_address[4])
         self.zip_code = customtkinter.StringVar(value=form_ship_address[5])
         self.phone = customtkinter.StringVar(value=form_ship_address[6])
+        
         # self.box_exist_info = form_ship_address[7]
-        self.list_creadit = []
-        credit =  open(current_folder+'/credit.txt', 'r')
-        for line in credit:
-            number, month, year = line.strip().split('|')
-            self.list_creadit.append([number, month, year])
+        # self.list_creadit = []
+        # credit =  open(current_folder+'/credit.txt', 'r')
+        # if self.radio_var_usecvv.get() == '0':
+        #     for line in credit:
+        #         number, month, year = line.split('|')
+        #         self.list_creadit.append([number, month, year])
+        # else :
+        #     for line in credit:
+        #         print(line.split('|'))
+        #         number, month, year, cvv = line.strip().split('|')
+        #         self.list_creadit.append([number, month, year,cvv])
     def save_account(self):
         with open(current_folder+'/account.txt', 'w') as f :
             account = str(self.email.get())+'|'+str(self.password.get())
@@ -258,7 +265,7 @@ class App(customtkinter.CTk):
             f.write(url_product)
     def save_proxy(self):
          with open(current_folder+'/proxy.txt', 'w') as f :
-            proxy = str(self.radio_button_proxy.get()) +'|'+str(self.proxy.get()) 
+            proxy = str(self.radio_button_proxy.get()) +'|'+str(self.proxy.get())+'|'  +str(self.radio_var_usecvv.get())
             f.write(proxy)
     def change_account(self):
         print('Change ok')

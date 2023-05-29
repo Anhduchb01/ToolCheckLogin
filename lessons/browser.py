@@ -83,7 +83,7 @@ class Browser:
 		# field.clear()
 		# field.click()
 		self.browser.execute_script("arguments[0].removeAttribute('disabled')", field)
-		field.send_keys('000')
+		field.send_keys(text)
 		# Scroll the element into view
 		# self.browser.execute_script("arguments[0].scrollIntoView();", field)
 

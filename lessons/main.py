@@ -11,6 +11,7 @@ from browser import Browser
 from selenium.webdriver.common.action_chains import ActionChains
 import os
 import datetime
+import traceback
 # Get the current folder
 current_folder = os.getcwd()
 def action_register(browser):
@@ -138,9 +139,10 @@ def action_add_bill_address(browser,email,password,address,city,state,zip_code,p
 		
 
 
-def action_add_creadit(browser,number:str,month:str,year:str):
+def action_add_creadit(browser,number:str,month:str,year:str,cvv:str):
 
 	print('start click')
+	print(cvv)
 	while True:
 		if browser.page_loading() :
 			time.sleep(4)
@@ -238,7 +240,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		wait.until(EC.presence_of_element_located((By.ID, 'braintree-hosted-field-cvv')))
 		element_cvv_iframe = element_cvv_parent_iframe.find_element(By.ID, 'braintree-hosted-field-cvv')
 		browser.browser.switch_to.frame(element_cvv_iframe)
-		browser.add_input_1(By.NAME,'cvv','000')
+		browser.add_input_1(By.NAME,'cvv',cvv)
 		print('Add ccv  OK')
 		time.sleep(3)
 
@@ -353,8 +355,7 @@ def action_add_creadit(browser,number:str,month:str,year:str):
 		print(element_cvv_iframe)
 		
 		# Scroll the element into view using JavaScript
-		
-		browser.add_input_1(By.NAME,'cvv','000')
+		browser.add_input_1(By.NAME,'cvv',cvv)
 		print('Add ccv  OK')
 		time.sleep(3)
 
@@ -507,16 +508,23 @@ def run():
 		phone = form_ship_address[6]
 		check_box_exist_info = form_ship_address[7]
 		list_creadit = []
-		
-		with open(current_folder+'/credit.txt', 'r') as f:
-			for line in f:
-				number, month, year = line.strip().split('|')
-				list_creadit.append([number, month, year])
 		with open(current_folder+'/proxy.txt', 'r') as f:
 			for line in f:
-				check_proxy, proxy = line.strip().split('|')
+				check_proxy, proxy ,use_cvv_000= line.strip().split('|')
 				check_proxy = check_proxy.replace(' ','')
 				proxy= proxy.replace(' ','')
+				use_cvv_000= use_cvv_000.replace(' ','')
+		if use_cvv_000 == '1':
+			with open(current_folder+'/credit.txt', 'r') as f:
+				for line in f:
+					number, month, year = line.strip().split('|')
+					list_creadit.append([number, month, year])
+		else :
+			with open(current_folder+'/credit.txt', 'r') as f:
+				for line in f:
+					number, month, year ,cvv = line.strip().split('|')
+					list_creadit.append([number, month, year,cvv])
+		
 
 		browser = Browser(current_folder+'/drivers/chromedriver.exe',check_proxy=check_proxy,proxy=proxy)
 		# Register Account
@@ -555,11 +563,18 @@ def run():
 			number = list_creadit[i][0]
 			month = list_creadit[i][1]
 			year = list_creadit[i][2]
+			print('use_cvv_000  :',use_cvv_000)
+			print(list_creadit[i])
+			if use_cvv_000 == '1':	
+				cvv = '000'
+			else:
+				cvv = list_creadit[i][3]
+	
 			time.sleep(3)
 			
 			while True:
 				try:
-					action_add_creadit(browser,number,month,year)
+					action_add_creadit(browser,number,month,year,cvv)
 					break
 				except:
 					print('refresh')
@@ -598,11 +613,11 @@ def run():
 				wait.until(EC.presence_of_element_located((By.ID, 'checkout-error')))
 				browser.browser.find_element(By.ID,'checkout-error')
 				print('Khong thanh toan duoc')
-				line= f'{number}|{month}|{year}|fail'
+				line= f'{number}|{month}|{year}|{cvv}|fail'
 				save_result_fail(line)
 			except  :
 				print('thanh toan duoc không hiện lỗi')
-				line= f'{number}|{month}|{year}|pass'
+				line= f'{number}|{month}|{year}|{cvv}|pass'
 				save_result_pass(line)
 				getproduct_add(browser,urls,check_box_exist_info,email,password,first_name,last_name,address,city,state,zip_code,phone,False)
 			print('Current iframe',browser.browser.current_url)
@@ -628,7 +643,6 @@ def run():
 		browser.close_browser()
 	except Exception as e:
 		now = datetime.datetime.now()
-		error = e
-		with open(current_folder + '/log_error.txt', 'w') as f:
-			f.write('-----------'+now+'------------' +'\n'+str(error) + '\n'+'--------------------------------------------------')
+		with open(current_folder + '/log_error.txt', 'a') as f:
+			f.write('-----------'+str(now)+'------------' +'\n'+str(traceback.format_exc()) + '\n'+'--------------------------------------------------'+'\n')
 	
